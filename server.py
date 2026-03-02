@@ -1,126 +1,158 @@
-from flask import Flask, request, jsonify, session, redirect, render_template, render_template_string
+from flask import Flask, request, jsonify, render_template, redirect, session
 import os
-import time
 import json
+import secrets
+import hashlib
+import time
 
 app = Flask(__name__)
-app.secret_key = "zx_is_c00l"
+app.secret_key = "zx_super_secret_key"
 
-# ===== CONFIG =====
+# ==============================
+# CONFIGURAÇÕES
+# ==============================
 
-SYSTEM_ENABLED = True  # Kill switch global
-
+USERS_FOLDER = "USERS"
 ADMIN_USER = "admin"
-ADMIN_PASS = "Chave"  # troque aqui
+ADMIN_PASS = "Chave"
+SYSTEM_ENABLED = True
+ADMIN_SESSION_TIME = 1800  # 30 min session
 
-# Lista de chaves válidas
-VALID_KEYS = {
-    "ABC123": {"banned": False},
-    "ZX999": {"banned": False},
-}
+# ===== Cria USERS se não existir
+if not os.path.exists(USERS_FOLDER):
+    os.makedirs(USERS_FOLDER)
 
-# Guarda info dos usuários (read/write em arquivo se quiser depois)
-DATA_FOLDER = "users"
-if not os.path.exists(DATA_FOLDER):
-    os.makedirs(DATA_FOLDER)
+# ==============================
+# FUNÇÕES AUXILIARES
+# ==============================
 
-# ===== ROTAS =====
+def user_file(userid):
+    return os.path.join(USERS_FOLDER, f"{userid}.json")
+
+def load_user(userid):
+    path = user_file(userid)
+    if not os.path.exists(path):
+        return None
+    with open(path, "r") as f:
+        return json.load(f)
+
+def save_user_data(userid, data):
+    with open(user_file(userid), "w") as f:
+        json.dump(data, f, indent=4)
+
+def list_users():
+    return [
+        f.replace(".json", "")
+        for f in os.listdir(USERS_FOLDER)
+        if f.endswith(".json")
+    ]
+
+# ==============================
+# HOME E STATUS
+# ==============================
 
 @app.route("/")
 def home():
-    return {"status": "online", "system_enabled": SYSTEM_ENABLED}
+    return render_template("index.html")
 
 @app.route("/status")
 def status():
     return {"status": "online", "system_enabled": SYSTEM_ENABLED}
 
-@app.route("/auth")
+# ==============================
+# AUTENTICAÇÃO
+# ==============================
+
+@app.route("/auth", methods=["GET", "POST"])
+@app.route("/auth/", methods=["GET", "POST"])
 def auth():
     global SYSTEM_ENABLED
 
     if not SYSTEM_ENABLED:
         return jsonify({"valid": False, "reason": "System disabled"})
 
-    key = request.args.get("key")
+    # Captura userid
+    userid = request.args.get("userid") or request.form.get("userid")
+    if not userid:
+        return jsonify({"valid": False, "reason": "Missing userid"})
 
-    if not key:
-        return jsonify({"valid": False, "reason": "No key provided"})
+    # Se usuário não existe → cria
+    data = load_user(userid)
+    if data is None:
+        # gera key única
+        random_part = secrets.token_hex(8)
+        gen_key = hashlib.sha256((userid + random_part).encode()).hexdigest()
+        data = {
+            "userid": userid,
+            "generated_key": gen_key,
+            "active": True,
+            "created_at": int(time.time())
+        }
+        save_user_data(userid, data)
+        return jsonify({"valid": True, "new_account": True, "generated_key": gen_key})
 
-    if key in VALID_KEYS:
-        if VALID_KEYS[key]["banned"]:
-            return jsonify({"valid": False, "reason": "Key banned"})
-        return jsonify({"valid": True})
+    # válido apenas se ativo
+    if not data.get("active", False):
+        return jsonify({"valid": False, "reason": "User banned"})
 
-    return jsonify({"valid": False, "reason": "Invalid key"})
+    return jsonify({"valid": True, "generated_key": data.get("generated_key")})
 
-# ===== ADMIN LOGIN =====
+# ==============================
+# ADMIN LOGIN
+# ==============================
 
 @app.route("/admin-login", methods=["GET", "POST"])
 def admin_login():
     if request.method == "POST":
         user = request.form.get("username")
-        password = request.form.get("password")
-
-        if user == ADMIN_USER and password == ADMIN_PASS:
+        pwd = request.form.get("password")
+        if user == ADMIN_USER and pwd == ADMIN_PASS:
             session["admin"] = True
             session["login_time"] = int(time.time())
             return redirect("/admin-panel")
+    return render_template("admin_login.html")
 
-    return render_template_string("""
-        <h2>ZX Admin Login</h2>
-        <form method="POST">
-            <input name="username" placeholder="Username"><br><br>
-            <input name="password" type="password" placeholder="Password"><br><br>
-            <button type="submit">Login</button>
-        </form>
-    """)
-
-# ===== ADMIN PANEL =====
+# ==============================
+# ADMIN PANEL
+# ==============================
 
 @app.route("/admin-panel")
 def admin_panel():
-    global SYSTEM_ENABLED
-
     if not session.get("admin"):
         return redirect("/admin-login")
 
-    # controla sessão
-    # (pode adicionar timeout se quiser futuramente)
+    # Verifica sessão
+    if "login_time" in session:
+        if int(time.time()) - session["login_time"] > ADMIN_SESSION_TIME:
+            session.clear()
+            return redirect("/admin-login")
 
-    return render_template_string("""
-        <h1>ZX Admin Panel</h1>
+    users = [load_user(u) for u in list_users()]
 
-        <p><strong>Kill Switch:</strong> {{ "ENABLED" if system else "DISABLED" }}</p>
-        <a href="/toggle-system">Toggle Kill Switch</a><br><br>
+    return render_template("admin_panel.html", users=users, system_enabled=SYSTEM_ENABLED)
 
-        <h3>Keys:</h3>
-        {% for key, data in keys.items() %}
-            <div>
-                <strong>{{key}}</strong> → banned: {{data["banned"]}}
-                <a href="/toggle-ban/{{key}}">[Toggle Ban]</a>
-            </div>
-        {% endfor %}
-        <br>
-        <a href="/admin-logout">Logout Admin</a>
-    """, system=SYSTEM_ENABLED, keys=VALID_KEYS)
+# ==============================
+# BAN / TOGGLE / LOGOUT
+# ==============================
+
+@app.route("/toggle-ban/<userid>")
+def toggle_ban(userid):
+    if not session.get("admin"):
+        return redirect("/admin-login")
+
+    data = load_user(userid)
+    if data:
+        data["active"] = not data.get("active", True)
+        save_user_data(userid, data)
+
+    return redirect("/admin-panel")
 
 @app.route("/toggle-system")
 def toggle_system():
     global SYSTEM_ENABLED
     if not session.get("admin"):
         return redirect("/admin-login")
-
     SYSTEM_ENABLED = not SYSTEM_ENABLED
-    return redirect("/admin-panel")
-
-@app.route("/toggle-ban/<key>")
-def toggle_ban(key):
-    if not session.get("admin"):
-        return redirect("/admin-login")
-
-    if key in VALID_KEYS:
-        VALID_KEYS[key]["banned"] = not VALID_KEYS[key]["banned"]
-
     return redirect("/admin-panel")
 
 @app.route("/admin-logout")
@@ -128,7 +160,9 @@ def admin_logout():
     session.clear()
     return redirect("/admin-login")
 
-# ===== RUN =====
+# ==============================
+# RUN
+# ==============================
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
+    app.run(port=5000)
