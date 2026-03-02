@@ -68,6 +68,10 @@ def save_user(userid, data):
 # AUTH USER
 # ==============================
 
+@app.route("/status")
+def status():
+    return {"status": "online", "version": "1.0"}
+
 @app.route("/auth", methods=["POST"])
 def auth():
 
@@ -220,4 +224,5 @@ def admin_logout():
 # ==============================
 
 if __name__ == "__main__":
+
     app.run(port=5000)
