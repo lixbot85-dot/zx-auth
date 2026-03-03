@@ -1,74 +1,89 @@
-import os
 import sqlite3
 import secrets
 import hashlib
 import time
 
-from flask import (
-    Flask,
-    request,
-    jsonify,
-    render_template,
-    redirect,
-    session,
-)
+from flask import Flask, request, jsonify, redirect, session
 
 app = Flask(__name__)
-app.secret_key = "ZX_SUPER_SECRET_KEY"
+app.secret_key = "ZX_SECRET_KEY"
 
-# ===== Configuração =====
-
-DATABASE_PATH = "zxauth.db"
+DATABASE = "zxauth.db"
 ZX_SECRET = "SUA_CHAVE_SECRETA_AQUI"
 
 ADMIN_USER = "admin"
 ADMIN_PASS = "Chave"
 SYSTEM_ENABLED = True
-ADMIN_SESSION_TIME = 1800
 
-# ===========================
-# SQLITE HELPER FUNCTIONS
-# ===========================
+# ==========================
+# DATABASE INIT
+# ==========================
 
 def get_db():
-    conn = sqlite3.connect(DATABASE_PATH)
+    conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
     return conn
 
 def init_db():
     db = get_db()
+
     db.execute("""
         CREATE TABLE IF NOT EXISTS users (
             userid TEXT PRIMARY KEY,
             generated_key TEXT,
             active INTEGER,
             created_at INTEGER
-        );
+        )
     """)
+
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS ip_logs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            userid TEXT,
+            ip TEXT,
+            timestamp INTEGER
+        )
+    """)
+
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS banned_ips (
+            ip TEXT PRIMARY KEY,
+            created_at INTEGER
+        )
+    """)
+
     db.commit()
     db.close()
 
 init_db()
 
-# ===========================
-# STATUS & HOME
-# ===========================
+# ==========================
+# HELPER
+# ==========================
 
-@app.route("/")
-def home():
-    return render_template("index.html")
+def get_ip():
+    if request.headers.get("X-Forwarded-For"):
+        return request.headers.get("X-Forwarded-For").split(",")[0]
+    return request.remote_addr
 
-@app.route("/status")
-def status():
-    return {"status": "online", "system_enabled": SYSTEM_ENABLED}
+def is_ip_banned(ip):
+    db = get_db()
+    row = db.execute("SELECT * FROM banned_ips WHERE ip = ?", (ip,)).fetchone()
+    db.close()
+    return row is not None
 
-# ===========================
-# AUTH ROUTE (CLIENT)
-# ===========================
+# ==========================
+# AUTH
+# ==========================
 
 @app.route("/auth", methods=["POST"])
 def auth():
     global SYSTEM_ENABLED
+
+    ip = get_ip()
+
+    if is_ip_banned(ip):
+        return jsonify({"valid": False, "reason": "IP banned"}), 403
 
     if not SYSTEM_ENABLED:
         return jsonify({"valid": False, "reason": "System disabled"}), 403
@@ -84,6 +99,13 @@ def auth():
     userid = str(data["userid"])
 
     db = get_db()
+
+    # Log IP
+    db.execute(
+        "INSERT INTO ip_logs (userid, ip, timestamp) VALUES (?, ?, ?)",
+        (userid, ip, int(time.time()))
+    )
+
     row = db.execute(
         "SELECT * FROM users WHERE userid = ?",
         (userid,)
@@ -96,121 +118,128 @@ def auth():
         ).hexdigest()
 
         db.execute(
-            "INSERT INTO users (userid, generated_key, active, created_at) VALUES (?, ?, ?, ?)",
+            "INSERT INTO users VALUES (?, ?, ?, ?)",
             (userid, generated_key, 1, int(time.time()))
         )
         db.commit()
         db.close()
 
-        return jsonify({
-            "valid": True,
-            "new_account": True,
-            "generated_key": generated_key
-        })
+        return jsonify({"valid": True, "new_account": True})
 
     if row["active"] == 0:
         db.close()
         return jsonify({"valid": False, "reason": "User banned"}), 403
 
-    generated_key = row["generated_key"]
+    db.commit()
     db.close()
 
-    return jsonify({"valid": True, "generated_key": generated_key})
+    return jsonify({"valid": True})
 
-# ===========================
-# ADMIN LOGIN
-# ===========================
+# ==========================
+# ADMIN LOGIN (TEXT ONLY)
+# ==========================
 
-@app.route("/admin-login", methods=["GET", "POST"])
+@app.route("/admin-login", methods=["POST"])
 def admin_login():
-    if request.method == "POST":
-        user = request.form.get("username")
-        pwd = request.form.get("password")
+    data = request.get_json()
 
-        if user == ADMIN_USER and pwd == ADMIN_PASS:
-            session["admin"] = True
-            session["login_time"] = int(time.time())
-            return redirect("/admin-panel")
+    if not data:
+        return "Send JSON: {username, password}"
 
-    return render_template("admin_login.html")
+    if data.get("username") == ADMIN_USER and data.get("password") == ADMIN_PASS:
+        session["admin"] = True
+        return "Login successful"
 
-# ===========================
-# ADMIN PANEL
-# ===========================
+    return "Invalid credentials"
+
+# ==========================
+# DASHBOARD (TEXT)
+# ==========================
 
 @app.route("/admin-panel")
 def admin_panel():
     if not session.get("admin"):
-        return redirect("/admin-login")
-
-    if "login_time" in session:
-        if int(time.time()) - session["login_time"] > ADMIN_SESSION_TIME:
-            session.clear()
-            return redirect("/admin-login")
+        return "Unauthorized"
 
     db = get_db()
-    rows = db.execute("SELECT * FROM users").fetchall()
-    users = [dict(row) for row in rows]
+
+    users = db.execute("SELECT * FROM users").fetchall()
+    banned_ips = db.execute("SELECT * FROM banned_ips").fetchall()
+
+    output = "=== ZX ADMIN PANEL ===\n\n"
+
+    output += f"System Enabled: {SYSTEM_ENABLED}\n\n"
+
+    output += "Users:\n"
+    for u in users:
+        output += f"- {u['userid']} | Active: {bool(u['active'])}\n"
+
+    output += "\nBanned IPs:\n"
+    for ip in banned_ips:
+        output += f"- {ip['ip']}\n"
+
     db.close()
+    return output
 
-    return render_template(
-        "admin_panel.html",
-        users=users,
-        system_enabled=SYSTEM_ENABLED,
-    )
+# ==========================
+# BAN USER
+# ==========================
 
-# ===========================
-# TOGGLE USER BAN
-# ===========================
-
-@app.route("/toggle-ban/<userid>")
-def toggle_ban(userid):
+@app.route("/ban-user/<userid>")
+def ban_user(userid):
     if not session.get("admin"):
-        return redirect("/admin-login")
+        return "Unauthorized"
 
     db = get_db()
-    row = db.execute(
-        "SELECT * FROM users WHERE userid = ?",
-        (userid,)
-    ).fetchone()
-
-    if row:
-        new_status = 0 if row["active"] == 1 else 1
-        db.execute(
-            "UPDATE users SET active = ? WHERE userid = ?",
-            (new_status, userid)
-        )
-        db.commit()
-
+    db.execute("UPDATE users SET active = 0 WHERE userid = ?", (userid,))
+    db.commit()
     db.close()
-    return redirect("/admin-panel")
 
-# ===========================
-# KILL SWITCH
-# ===========================
+    return f"User {userid} banned."
+
+# ==========================
+# BAN IP
+# ==========================
+
+@app.route("/ban-ip/<ip>")
+def ban_ip(ip):
+    if not session.get("admin"):
+        return "Unauthorized"
+
+    db = get_db()
+    db.execute(
+        "INSERT OR IGNORE INTO banned_ips VALUES (?, ?)",
+        (ip, int(time.time()))
+    )
+    db.commit()
+    db.close()
+
+    return f"IP {ip} banned."
+
+# ==========================
+# TOGGLE SYSTEM
+# ==========================
 
 @app.route("/toggle-system")
 def toggle_system():
     global SYSTEM_ENABLED
-
     if not session.get("admin"):
-        return redirect("/admin-login")
+        return "Unauthorized"
 
     SYSTEM_ENABLED = not SYSTEM_ENABLED
-    return redirect("/admin-panel")
+    return f"System Enabled: {SYSTEM_ENABLED}"
 
-# ===========================
-# ADMIN LOGOUT
-# ===========================
+# ==========================
+# HOME
+# ==========================
 
-@app.route("/admin-logout")
-def admin_logout():
-    session.clear()
-    return redirect("/admin-login")
+@app.route("/")
+def home():
+    return "ZXAuth Online"
 
-# ===========================
+# ==========================
 # RUN
-# ===========================
+# ==========================
 
 if __name__ == "__main__":
     app.run()
