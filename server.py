@@ -76,7 +76,7 @@ def is_ip_banned(ip):
 # AUTH
 # ==========================
 
-@app.route("/auth", methods=["POST"])
+@app.route("/auth")
 def auth():
     global SYSTEM_ENABLED
 
@@ -139,7 +139,7 @@ def auth():
 # ADMIN LOGIN (TEXT ONLY)
 # ==========================
 
-@app.route("/admin-login", methods=["POST"])
+@app.route("/admin-login")
 def admin_login():
     data = request.get_json()
 
@@ -243,3 +243,4 @@ def home():
 
 if __name__ == "__main__":
     app.run()
+
