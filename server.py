@@ -282,7 +282,7 @@ def chat():
         reply = call_model(model_choice, prompt, model=model_choice)
         return jsonify({"reply": reply})
 
-    return render_template("chat.html")
+    return render_template("templates/chat.html")
 
 # ==========================
 # RUN
