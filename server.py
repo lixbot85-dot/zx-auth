@@ -88,10 +88,6 @@ def auth():
     if not SYSTEM_ENABLED:
         return jsonify({"valid": False, "reason": "System disabled"}), 403
 
-    secret = request.headers.get("X-App-Auth")
-    if secret != ZX_SECRET:
-        return jsonify({"valid": False, "reason": "Unauthorized"}), 403
-
     data = request.get_json()
     if not data or "userid" not in data:
         return jsonify({"valid": False, "reason": "Missing userid"}), 400
@@ -236,6 +232,57 @@ def toggle_system():
 @app.route("/")
 def home():
     return "ZXAuth Online"
+
+# ==========================
+# CHAT
+# ==========================
+
+# Configuração das APIs
+APIS = {
+    "chatgpt": {"url": "https://api.openai.com/v1/chat/completions", "key": "COLOQUE_SUA_CHAVE"},
+    "groq": {"url": "https://api.groq.ai/v1/chat", "key": None},
+    "freegpt4": {"url": "https://api.gpt4free.io/v1/chat/completions", "key": None},  # <-- nova URL
+    "google": {"url": "https://api.google.com/v1/chat", "key": "COLOQUE_SUA_CHAVE"}
+}
+
+def call_model(api_name, prompt, model="default"):
+    api = APIS.get(api_name)
+    if not api:
+        return "Modelo inválido."
+    try:
+        payload = {"messages":[{"role":"user","content":prompt}], "model": model, "max_tokens":200}
+        headers = {"Content-Type": "application/json"}
+        if api["key"]:
+            headers["Authorization"] = f"Bearer {api['key']}"
+        response = requests.post(api["url"], headers=headers, json=payload)
+        data = response.json()
+        # GPT4Free retorna as respostas dentro de choices[0].message.content
+        if api_name == "freegpt4":
+            return data["choices"][0]["message"]["content"]
+        return data.get("reply", "ZX não respondeu.")
+    except Exception as e:
+        print("Erro na API:", e)
+        return "Erro ao conectar com o modelo."
+
+@app.route("/chat", methods=["GET", "POST"])
+def chat():
+    if request.method == "POST":
+        data = request.json
+        message = data.get("message", "")
+        memory = data.get("memory", [])
+        model_choice = data.get("model", "freegpt4")
+
+        # Monta prompt com memória
+        prompt = ""
+        for item in memory:
+            role = "User" if item["role"]=="user" else "ZX"
+            prompt += f"{role}: {item['content']}\n"
+        prompt += f"User: {message}\nZX:"
+
+        reply = call_model(model_choice, prompt, model=model_choice)
+        return jsonify({"reply": reply})
+
+    return render_template("chat.html")
 
 # ==========================
 # RUN
