@@ -13,7 +13,12 @@ LIBRARY_PATH = os.path.join(BASE_PATH, "library")
 # ===== HOME =====
 @app.route("/")
 def home():
-    return render_template("home.html")
+    # Abre o HTML completo que você salvou em templates/index.html
+    try:
+        with open("templates/index.html", "r", encoding="utf-8") as f:
+            return Response(f.read(), mimetype="text/html")
+    except Exception as e:
+        return Response(f"<h1>Erro ao carregar HTML: {e}</h1>", mimetype="text/html")
 
 # ===== FILE EXPLORER (JSON + HTML SUPPORT) =====
 @app.route("/files/", defaults={"req_path": ""})
