@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZX Launcher</title>
+
+<!-- Fonte moderna -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+  /* Reset básico */
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Roboto', sans-serif; }
+
+  body {
+    background: linear-gradient(135deg, #1a1a1a, #333);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  header {
+    padding: 1rem 2rem;
+    background: #111;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid #ff5e5e;
+  }
+
+  header h1 {
+    font-size: 1.5rem;
+    color: #ff5e5e;
+  }
+
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .launcher-button {
+    background: #ff5e5e;
+    color: #fff;
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-bottom: 2rem;
+  }
+
+  .launcher-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px #ff5e5e;
+  }
+
+  iframe {
+    width: 90%;
+    max-width: 1200px;
+    height: 700px;
+    border: 2px solid #ff5e5e;
+    border-radius: 12px;
+    box-shadow: 0 0 20px #ff5e5e55;
+    transition: all 0.3s ease;
+  }
+
+  footer {
+    text-align: center;
+    padding: 1rem;
+    background: #111;
+    border-top: 2px solid #ff5e5e;
+  }
+
+  a { color: #ff5e5e; text-decoration: none; }
+</style>
+</head>
+
+<body>
+<header>
+  <h1>ZX Launcher</h1>
+  <span>Versão Demo</span>
+</header>
+
+<main>
+  <button class="launcher-button" id="playBtn">Jogar One Night At Bendy</button>
+  
+  <!-- Iframe que vai carregar o HTML do Dropbox -->
+  <iframe id="gameFrame" src="" frameborder="0" allowfullscreen></iframe>
+</main>
+
+<footer>
+  &copy; 2026 ZX Universe • <a href="#">Suporte</a>
+</footer>
+
+<script>
+  const playBtn = document.getElementById('playBtn');
+  const gameFrame = document.getElementById('gameFrame');
+
+  // Link direto do Dropbox
+  const dropboxLink = "https://uc8ab7cb8d1d057b35dfbf3929a9.dl.dropboxusercontent.com/cd/0/inline/C9wCc-CPhA8zhSd_jk7QeLAzw2zlcfzJAdj3gI7FZBQ1qmTS2pqxvgzOkxfOEYgmC0kfLEiqXj0HtOCEMmQgi04B-A0ES8ZB8Maq11ibYp4zSZn7KB31uhiE01S_ZY9ZX1P6WmlaexyIEPPyvvvIr5A-/file#";
+
+  // Ao clicar, carrega o iframe
+  playBtn.addEventListener('click', () => {
+    gameFrame.src = dropboxLink;
+    gameFrame.scrollIntoView({behavior: "smooth"});
+  });
+</script>
+</body>
+</html>
