@@ -18,6 +18,10 @@ def home():
         "service": "ZX SERVER"
     })
 
+@app.route("/plushy")
+def home():
+    return send_from_directory("files", "plushyhomes.html")
+
 # ===== FILE EXPLORER (JSON + HTML SUPPORT) =====
 @app.route("/files/", defaults={"req_path": ""})
 @app.route("/files/<path:req_path>")
