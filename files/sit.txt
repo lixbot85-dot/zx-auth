@@ -1,0 +1,1860 @@
+<!DOCTYPE html>
+<!-- saved from url=(0029)https://plushyplayground.org/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plushy Home</title>
+    
+    
+      <!-- FAVICON -->
+    <link rel="icon" href="https://plushyplayground.org/assets/pfav.png">
+    
+    
+    <link rel="stylesheet" href="./Plushy Homes_files/style.css">
+
+<style>._content_1h9d5_1{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none}._content_1h9d5_1 div{background:#2424244d;color:#fff!important;padding:24px;font-size:48px;font-weight:700;border-radius:16px}._flexBox_9xdww_14{flex-flow:unset}._gap_extraTiny_9xdww_18{gap:2px}._gap_tiny_9xdww_22{gap:4px}._gap_extraSmall_9xdww_26{gap:6px}._gap_small_9xdww_30{gap:8px}._gap_medium_9xdww_34{gap:16px}._gap_normal_9xdww_38{gap:24px}._gap_large_9xdww_42{gap:32px}._gap_xLarge_9xdww_46{gap:48px}._gap_xxLarge_9xdww_50{gap:56px}._gap_extraLarge_9xdww_54{gap:64px}._column_9xdww_58{flex-direction:column!important}._flexWrap_9xdww_62{flex-wrap:wrap}
+</style></head>
+<body class="home-body">
+
+<!-- UNDER CONSTRUCTION OVERLAY — TABLETS / iPADS ONLY -->
+<div id="under-construction-overlay" style="
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: hotpink;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 999999;
+    color: white;
+    font-family: &#39;Comic Sans MS&#39;, sans-serif;
+    font-size: 5vh;
+    text-align: center;
+    pointer-events: auto;
+">
+    <img src="./Plushy Homes_files/plushy_splashpage.gif" alt="Plushy" style="width: 80vw; max-width: 400px; image-rendering: pixelated; margin-bottom: 4vh;">
+    <p>UNDER CONSTRUCTION</p>
+</div>
+
+<style>
+/* DEFAULT: hidden everywhere */
+#under-construction-overlay {
+    display: none !important;
+}
+
+/* ✅ SHOW ONLY ON TABLETS / iPADS */
+@media (pointer: coarse) and (min-width: 768px) and (max-width: 1024px) {
+    #under-construction-overlay {
+        display: flex !important;
+    }
+}
+</style>
+
+
+<!-- =========================================================
+     GLOBAL SKIP SPLASH FLAG — MUST BE FIRST
+========================================================= -->
+<script>
+window.SKIP_SPLASH = sessionStorage.getItem("skipSplash") === "true";
+if (window.SKIP_SPLASH) {
+    sessionStorage.removeItem("skipSplash");
+}
+</script>
+
+<script>
+/* =========================================================
+   iOS POINTER EVENT ENABLE (CRITICAL)
+========================================================= */
+if (window.PointerEvent === undefined) {
+    document.documentElement.style.touchAction = "none";
+}
+</script>
+
+<!-- =========================================================
+     FAKE SPLASH OVERLAY
+========================================================= -->
+
+
+<script>
+/* Remove splash immediately when skipping */
+if (window.SKIP_SPLASH) {
+    document.getElementById("fakeSplash")?.remove();
+}
+</script>
+
+<!-- =========================================================
+     STUFFIES (ONLY IF NOT SKIPPING SPLASH)
+========================================================= -->
+<script>
+if (!window.SKIP_SPLASH) {
+    document.write(`
+        <div class="stuffy-wrap" id="wrap1"><img src="assets/stuffy1.png" class="stuffy-img" alt=""></div>
+        <div class="stuffy-wrap" id="wrap2"><img src="assets/stuffy2.png" class="stuffy-img" alt=""></div>
+        <div class="stuffy-wrap" id="wrap3"><img src="assets/stuffy3.png" class="stuffy-img" alt=""></div>
+        <div class="stuffy-wrap" id="wrap4"><img src="assets/stuffy4.png" class="stuffy-img" alt=""></div>
+        <div class="stuffy-wrap" id="wrap5"><img src="assets/stuffy5.png" class="stuffy-img" alt=""></div>
+    `);
+}
+</script>
+        
+        
+        
+        
+        
+    
+
+<!-- =========================================================
+     DROP ZONE (ONLY IF NOT SKIPPING SPLASH)
+========================================================= -->
+<script>
+if (!window.SKIP_SPLASH) {
+    document.write('<div id="dropZone"></div>');
+}
+</script>
+
+<!-- =========================================================
+     BACKGROUND MUSIC (MANUAL START ONLY)
+========================================================= -->
+<audio id="bgMusic" src="assets/bgsong.mp3" playsinline=""></audio>
+
+<!-- =========================================================
+     CLICK-TO-START MUSIC (HOME PAGE ONLY)
+========================================================= -->
+<script>
+(() => {
+    const bgMusic = document.getElementById("bgMusic");
+    if (!bgMusic) return;
+
+    let started = false;
+
+    function startMusic() {
+        if (started) return;
+        started = true;
+        bgMusic.currentTime = 0;
+        bgMusic.volume = 1;
+        bgMusic.play().catch(() => {});
+        document.removeEventListener("click", startMusic);
+    }
+
+    /* 
+       RULES:
+       - Splash page click does NOTHING
+       - Music starts only:
+         1) After splash is gone
+         2) OR when skipping splash (true home)
+    */
+    if (window.SKIP_SPLASH) {
+        document.addEventListener("click", startMusic, { once: true });
+    }
+})();
+</script>
+
+
+
+<div class="bg-wrapper">
+
+    <!-- Background GIFs -->
+    <img src="./Plushy Homes_files/tetherball.gif" class="tetherball-gif" alt="Tetherball">
+    <img src="./Plushy Homes_files/seesaw.gif" class="seesaw-gif" alt="Seesaw">
+    <img src="./Plushy Homes_files/tickles.gif" class="tickles-gif" alt="Tickles">
+    <img src="./Plushy Homes_files/playground_banner.gif" class="playground-banner-gif" alt="Playground Banner">
+
+    <!-- Gear Drop Zone -->
+    <div class="gear-drop-zone"></div>
+
+    <!-- Final Gears -->
+    <img src="./Plushy Homes_files/blue_gear.png" class="blue-final" alt="Blue gear final">
+    <img src="./Plushy Homes_files/pink_gear.png" class="pink-final" alt="Pink gear final">
+    <img src="./Plushy Homes_files/red_gear.png" class="red-final" alt="Red gear final">
+    <img src="./Plushy Homes_files/yellow_gear.png" class="yellow-final" alt="Yellow gear final">
+
+    <!-- Draggable Gears -->
+    <img src="./Plushy Homes_files/blue_gear.png" class="gear gear-blue-start hidden" data-gear="blue" alt="Blue gear" style="left: 582.648px; top: 634.156px;">
+    <img src="./Plushy Homes_files/pink_gear.png" class="gear gear-pink-start hidden" data-gear="pink" alt="Pink gear" style="left: 616.359px; top: 596.234px;">
+    <img src="./Plushy Homes_files/red_gear.png" class="gear gear-red-start hidden" data-gear="red" alt="Red gear" style="left: 590.422px; top: 670.469px;">
+    <img src="./Plushy Homes_files/yellow_gear.png" class="gear gear-yellow-start hidden" data-gear="yellow" alt="Yellow gear" style="left: 590.547px; top: 717.141px;">
+
+<!-- Bottom Nav -->
+<div class="bottom-links">
+    <a id="imLink" href="https://plushyplayground.org/#" onclick="openIM(); return false;">Instant Message</a>
+
+    <span class="divider">|</span>
+
+    <a href="https://plushyplayground.org/grownups-access.php">Grown Ups Only</a>
+
+    <span class="divider">|</span>
+
+    <a href="https://plushyplayground.org/videos.html">Plushy Videos</a>
+</div>
+
+    
+    <!-- HINT BUTTON + CAPTION (shows when password box shows) -->
+<div class="pw-hint-wrap show-left" id="pwHintWrap">
+    <button type="button" class="pw-hint-btn" id="pwHintBtn">Hint</button>
+
+    <div class="pw-hint-popup hidden" id="pwHintPopup" role="dialog" aria-label="Hint">
+        <button type="button" class="pw-hint-x" id="pwHintClose" aria-label="Close hint">X</button>
+        <div class="pw-hint-text">Watch the videos</div>
+    </div>
+</div>
+
+
+    <!-- Password Box -->
+    <div class="password-box">
+        <div class="pw-window">
+            <div class="pw-row">
+                <input type="text" class="password-input" autocomplete="off" data-preset="true">
+                <button type="button" class="password-btn">OK</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- PASSWORD KEYBOARD — AOL STYLE, PORTRAIT MOBILE ONLY -->
+    <div id="pwKeyboard" class="pw-keyboard hidden">
+
+        <!-- WRAPPER FOR PROPER SCALING -->
+        <div class="pw-wrap">
+
+            <!-- NUMBER ROW WITH ESC FIRST -->
+            <div class="pw-row">
+                <button class="pw-key" data-key="ESC">ESC</button>
+                <button class="pw-key" data-key="1">1</button>
+                <button class="pw-key" data-key="2">2</button>
+                <button class="pw-key" data-key="3">3</button>
+                <button class="pw-key" data-key="4">4</button>
+                <button class="pw-key" data-key="5">5</button>
+                <button class="pw-key" data-key="6">6</button>
+                <button class="pw-key" data-key="7">7</button>
+                <button class="pw-key" data-key="8">8</button>
+                <button class="pw-key" data-key="9">9</button>
+                <button class="pw-key" data-key="0">0</button>
+            </div>
+
+            <!-- QWERTY ROW -->
+            <div class="pw-row">
+                <button class="pw-key" data-key="Q">Q</button>
+                <button class="pw-key" data-key="W">W</button>
+                <button class="pw-key" data-key="E">E</button>
+                <button class="pw-key" data-key="R">R</button>
+                <button class="pw-key" data-key="T">T</button>
+                <button class="pw-key" data-key="Y">Y</button>
+                <button class="pw-key" data-key="U">U</button>
+                <button class="pw-key" data-key="I">I</button>
+                <button class="pw-key" data-key="O">O</button>
+                <button class="pw-key" data-key="P">P</button>
+            </div>
+
+            <!-- HOME ROW + ENTER -->
+            <div class="pw-row">
+                <button class="pw-key" data-key="A">A</button>
+                <button class="pw-key" data-key="S">S</button>
+                <button class="pw-key" data-key="D">D</button>
+                <button class="pw-key" data-key="F">F</button>
+                <button class="pw-key" data-key="G">G</button>
+                <button class="pw-key" data-key="H">H</button>
+                <button class="pw-key" data-key="J">J</button>
+                <button class="pw-key" data-key="K">K</button>
+                <button class="pw-key" data-key="L">L</button>
+                <!-- ENTER key for password -->
+                <button class="pw-key" data-key="ENTER">ENTER</button>
+            </div>
+
+            <!-- BOTTOM LETTER ROW + BACKSPACE -->
+            <div class="pw-row">
+                <button class="pw-key" data-key="Z">Z</button>
+                <button class="pw-key" data-key="X">X</button>
+                <button class="pw-key" data-key="C">C</button>
+                <button class="pw-key" data-key="V">V</button>
+                <button class="pw-key" data-key="B">B</button>
+                <button class="pw-key" data-key="N">N</button>
+                <button class="pw-key" data-key="M">M</button>
+                <button class="pw-key" data-key="BACK">Bksp</button>
+            </div>
+
+            <!-- SPACE BAR (no text) -->
+            <div class="pw-row">
+                <button class="pw-key pw-space" data-key="SPACE"></button>
+            </div>
+
+        </div> <!-- end .pw-wrap -->
+
+    </div>
+
+
+
+    <!-- AOL CHAT WINDOW -->
+    <div id="aolWindow" class="aol-window hidden">
+
+        <!-- Titlebar -->
+        <div id="aolTitlebar" class="aol-titlebar">
+            <div id="dragZone" class="drag-zone"></div>
+            <span class="aol-title-text">MrPlushy - Instant Message</span>
+            <div class="aol-x-graphic">X</div>
+            <button id="aolCloseBtn" class="aol-close-hitbox"></button>
+        </div>
+
+        <!-- Chat messages -->
+        <div id="aolChatArea" class="aol-chat-area"></div>
+
+        <!-- Input box -->
+        <div class="aol-input-wrap">
+            <textarea id="aolInput" class="aol-input" spellcheck="false"></textarea>
+        </div>
+
+        <!-- Send button -->
+        <div class="aol-bottom-row">
+            <button id="aolSendBtn" class="aol-send-btn">Send</button>
+        </div>
+
+    </div> <!-- END AOL WINDOW -->
+
+    <!-- AOL 2.5 On-Screen Keyboard — MOBILE ONLY -->
+    <div id="aolKeyboard" class="aol-keyboard">
+
+<!-- 🔢 NUMBER ROW + ESC -->
+<div class="aol-key-row">
+    <button class="aol-key" data-key="ESC">ESC</button>
+    <button class="aol-key" data-key="1">1</button>
+    <button class="aol-key" data-key="2">2</button>
+    <button class="aol-key" data-key="3">3</button>
+    <button class="aol-key" data-key="4">4</button>
+    <button class="aol-key" data-key="5">5</button>
+    <button class="aol-key" data-key="6">6</button>
+    <button class="aol-key" data-key="7">7</button>
+    <button class="aol-key" data-key="8">8</button>
+    <button class="aol-key" data-key="9">9</button>
+    <button class="aol-key" data-key="0">0</button>
+</div>
+
+<!-- QWERTY ROW -->
+<div class="aol-key-row">
+    <button class="aol-key" data-key="Q">Q</button>
+    <button class="aol-key" data-key="W">W</button>
+    <button class="aol-key" data-key="E">E</button>
+    <button class="aol-key" data-key="R">R</button>
+    <button class="aol-key" data-key="T">T</button>
+    <button class="aol-key" data-key="Y">Y</button>
+    <button class="aol-key" data-key="U">U</button>
+    <button class="aol-key" data-key="I">I</button>
+    <button class="aol-key" data-key="O">O</button>
+    <button class="aol-key" data-key="P">P</button>
+</div>
+
+<!-- HOME ROW + ENTER -->
+<div class="aol-key-row">
+    <button class="aol-key" data-key="A">A</button>
+    <button class="aol-key" data-key="S">S</button>
+    <button class="aol-key" data-key="D">D</button>
+    <button class="aol-key" data-key="F">F</button>
+    <button class="aol-key" data-key="G">G</button>
+    <button class="aol-key" data-key="H">H</button>
+    <button class="aol-key" data-key="J">J</button>
+    <button class="aol-key" data-key="K">K</button>
+    <button class="aol-key" data-key="L">L</button>
+
+    <!-- WIDE ENTER (matches password keyboard) -->
+    <button class="aol-key" data-key="ENTER">ENTER</button>
+</div>
+
+<!-- BOTTOM LETTER ROW -->
+<div class="aol-key-row">
+    <button class="aol-key" data-key="Z">Z</button>
+    <button class="aol-key" data-key="X">X</button>
+    <button class="aol-key" data-key="C">C</button>
+    <button class="aol-key" data-key="V">V</button>
+    <button class="aol-key" data-key="B">B</button>
+    <button class="aol-key" data-key="N">N</button>
+    <button class="aol-key" data-key="M">M</button>
+
+    <!-- WIDE BACKSPACE (matches password keyboard's Bksp) -->
+    <button class="aol-key" data-key="BACK">Bksp</button>
+</div>
+
+<!-- SPACE BAR (no text) -->
+<div class="aol-key-row">
+    <button class="aol-key aol-key-space" data-key="SPACE"></button>
+</div>
+
+</div> <!-- end .aol-wrap -->
+
+</div> <!-- end #aolKeyboard -->
+
+
+<!-- BLUE SCREEN -->
+<div id="bluescreen" class="hidden">
+    <img src="./Plushy Homes_files/blue_screen_of_death.jpg" class="bluescreen-img" alt="Fatal error screen">
+</div>
+
+<!-- FULLSCREEN JUMPSCARE -->
+<div id="plushyFaceJump" class="hidden">
+    <img src="./Plushy Homes_files/plushy_face.gif" class="plushy-face-img" alt="Plushy Face">
+</div>
+
+<!-- BLACK FREEZE OVERLAY (currently unused, safe to keep) -->
+<div id="freezeScreen"></div>
+
+<!-- JUMPSCARE AUDIO -->
+<audio id="plushyLaugh" src="assets/plushy_laugh.mp3"></audio>
+
+<!-- MAIN SCRIPT: GEARS + CHAT + PASSWORD + JUMPSCARE -->
+<script>
+/* GLOBAL VIRUS STAGE */
+let virusStage = 0;
+
+/* When user comes back with the Back button, force a fresh reload */
+window.addEventListener("pageshow", function (e) {
+    if (e.persisted) {
+        window.location.reload();
+    }
+});
+
+/* Sounds */
+const errorSound  = new Audio("assets/error.mp3");
+const gearSound   = new Audio("assets/gearinsert.mp3");
+const unlockSound = new Audio("assets/gearunlock.mp3");
+const ringSound   = new Audio("assets/ring.mp3");
+const sendSound   = new Audio("assets/imsend.mp3");
+const recvSound   = new Audio("assets/imrcv.mp3");
+const doorSound   = new Audio("assets/doorclose.mp3");
+
+/* Elements */
+const dropZone      = document.querySelector(".gear-drop-zone");
+const passwordBox   = document.querySelector(".password-box");
+const passwordInput = document.querySelector(".password-input");
+const passwordBtn   = document.querySelector(".password-btn");
+
+/* =========================================================
+   HINT BOX (OPENS WITH PASSWORD BOX)
+========================================================= */
+const pwHintWrap  = document.getElementById("pwHintWrap");
+const pwHintBtn   = document.getElementById("pwHintBtn");
+const pwHintPopup = document.getElementById("pwHintPopup");
+const pwHintClose = document.getElementById("pwHintClose");
+
+function showHintWrap() {
+    if (!pwHintWrap) return;
+    pwHintWrap.classList.remove("hidden");
+    pwHintWrap.classList.add("show-left");
+}
+
+function hideHintWrap() {
+    if (!pwHintWrap) return;
+    pwHintWrap.classList.add("hidden");
+    pwHintWrap.classList.remove("show-left");
+    hideHintPopup();
+}
+
+function showHintPopup() {
+    if (!pwHintPopup) return;
+    pwHintPopup.classList.remove("hidden");
+}
+
+function hideHintPopup() {
+    if (!pwHintPopup) return;
+    pwHintPopup.classList.add("hidden");
+}
+
+/* Click hint -> toggle popup */
+if (pwHintBtn) {
+    pwHintBtn.addEventListener("click", () => {
+        if (!pwHintPopup) return;
+        pwHintPopup.classList.toggle("hidden");
+    });
+}
+
+/* X closes popup */
+if (pwHintClose) {
+    pwHintClose.addEventListener("click", (e) => {
+        e.stopPropagation();
+        hideHintPopup();
+    });
+}
+
+
+
+/* =========================================================
+   BLOCK NUMBERS IN PASSWORD INPUT (HARD BLOCK)
+========================================================= */
+passwordInput.addEventListener("input", () => {
+    // Strip numbers no matter how they get in
+    passwordInput.value = passwordInput.value.replace(/[0-9]/g, "");
+});
+
+passwordInput.addEventListener("keydown", e => {
+    // Block number keys from physical keyboards
+    if (e.key >= "0" && e.key <= "9") {
+        e.preventDefault();
+    }
+});
+
+/* =========================================================
+   PASSWORD KEYBOARD LOGIC (PORTRAIT MOBILE ONLY)
+========================================================= */
+
+const pwKeyboard = document.getElementById("pwKeyboard");
+
+/* TRUE only in portrait mobile */
+function isPortraitMobile() {
+    return window.matchMedia(
+        "(max-width: 600px) and (orientation: portrait) and (hover: none) and (pointer: coarse)"
+    ).matches;
+}
+
+/* SHOW KEYBOARD — CSS controls position, no JS top/left */
+function showPwKeyboard() {
+    if (!isPortraitMobile()) return;
+
+    // Prevent two keyboards at the same time
+    aolKeyboard.classList.remove("show");
+
+    pwKeyboard.classList.remove("hidden");
+    pwKeyboard.classList.add("show");
+}
+
+
+/* HIDE KEYBOARD */
+function hidePwKeyboard() {
+    pwKeyboard.classList.add("hidden");
+    pwKeyboard.classList.remove("show");
+}
+
+/* OPEN KEYBOARD WHEN TAPPING INPUT */
+passwordInput.addEventListener("touchstart", showPwKeyboard);
+passwordInput.addEventListener("click", showPwKeyboard);
+
+/* BUTTON CLICK HANDLING (ONLY PASSWORD KEYBOARD KEYS) */
+document.querySelectorAll("#pwKeyboard .pw-key").forEach(key => {
+    key.addEventListener("click", () => {
+
+        if (!isPortraitMobile()) return;
+
+        const val = key.dataset.key;
+
+        /* ESC closes keyboard */
+        if (val === "ESC") {
+            hidePwKeyboard();
+            return;
+        }
+
+        /* BACKSPACE */
+        if (val === "BACK") {
+            if (passwordInput.dataset.preset !== "true") {
+                passwordInput.value = passwordInput.value.slice(0, -1);
+            }
+            return;
+        }
+
+        /* ENTER submits password */
+        if (val === "ENTER") {
+            submitPassword();
+            return;
+        }
+
+        /* SPACE does nothing for password */
+        if (val === "SPACE") {
+            return;
+        }
+
+        /* Remove placeholder */
+        if (passwordInput.dataset.preset === "true") {
+            passwordInput.value = "";
+            passwordInput.dataset.preset = "false";
+        }
+
+        /* Insert character */
+        passwordInput.value += val;
+    });
+});
+
+/* =========================================================
+   AUTO-CLOSE PASSWORD KEYBOARD IN MOBILE LANDSCAPE — MATCH AOL
+========================================================= */
+function handlePwKeyboardOrientation() {
+
+    const isMobile    = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+    const isLandscape = window.innerWidth > window.innerHeight;
+
+    if (!isMobile) return;
+
+    if (isLandscape) {
+        hidePwKeyboard();
+    }
+}
+
+window.addEventListener("resize", handlePwKeyboardOrientation);
+window.addEventListener("orientationchange", handlePwKeyboardOrientation);
+handlePwKeyboardOrientation();
+
+
+/* =========================================================
+   AOL ELEMENTS
+========================================================= */
+
+const aolWindow   = document.getElementById("aolWindow");
+const aolChatArea = document.getElementById("aolChatArea");
+const aolInput    = document.getElementById("aolInput");
+const aolSendBtn  = document.getElementById("aolSendBtn");
+const aolCloseBtn = document.getElementById("aolCloseBtn");
+
+/* =========================================================
+   AOL ON-SCREEN KEYBOARD LOGIC — CLEAN WORKING VERSION
+========================================================= */
+
+const aolKeyboard = document.getElementById("aolKeyboard");
+
+/* DESKTOP = real typing, MOBILE = fake keyboard */
+function updateReadonlyMode() {
+    if (window.matchMedia("(hover: none) and (pointer: coarse)").matches) {
+        aolInput.setAttribute("readonly", "true");
+    } else {
+        aolInput.removeAttribute("readonly");
+    }
+}
+updateReadonlyMode();
+window.addEventListener("resize", updateReadonlyMode);
+
+/* SHOW AOL KEYBOARD */
+aolInput.addEventListener("touchstart", () => {
+    if (window.matchMedia("(hover: none) and (pointer: coarse)").matches) {
+        aolKeyboard.classList.add("show");
+        aolWindow.style.transform = "translateY(-12vh) scale(1.3)";
+        aolWindow.style.transformOrigin = "top center";
+    }
+});
+
+aolInput.addEventListener("click", () => {
+    if (window.matchMedia("(hover: none) and (pointer: coarse)").matches) {
+        aolKeyboard.classList.add("show");
+        aolWindow.style.transform = "translateY(-12vh) scale(1.3)";
+        aolWindow.style.transformOrigin = "top center";
+    }
+});
+
+/* AOL KEYS → insert letters / control */
+document.querySelectorAll(".aol-key").forEach(key => {
+    key.addEventListener("click", () => {
+        let val = key.dataset.key;
+
+        /* ESC closes keyboard */
+        if (val === "ESC") {
+            aolKeyboard.classList.remove("show");
+            aolWindow.style.transform = "";
+            return;
+        }
+
+        /* BACKSPACE */
+        if (val === "BACK") {
+            aolInput.value = aolInput.value.slice(0, -1);
+            return;
+        }
+
+        /* SPACE */
+        if (val === "SPACE") {
+            aolInput.value += " ";
+            return;
+        }
+
+        /* ENTER sends message */
+        if (val === "ENTER") {
+            sendUser();
+            return;
+        }
+
+        /* Normal character */
+        aolInput.value += val.toLowerCase();
+    });
+});
+
+/* Final gear positions */
+const finalPositions = {
+    blue:   document.querySelector(".blue-final"),
+    pink:   document.querySelector(".pink-final"),
+    red:    document.querySelector(".red-final"),
+    yellow: document.querySelector(".yellow-final")
+};
+
+let gearsInserted = { blue:false, pink:false, red:false, yellow:false };
+
+function isTouching(a, b) {
+    const ar = a.getBoundingClientRect();
+    const br = b.getBoundingClientRect();
+    return !(ar.right < br.left || ar.left > br.right || ar.bottom < br.top || ar.top > br.bottom);
+}
+
+function showPasswordBox() {
+    passwordBox.classList.remove("hidden");
+    showHintWrap();       // <-- opens hint at same time
+}
+
+/* =========================================================
+   GEAR PUZZLE PERSISTENCE (sessionStorage)
+   - stays solved while navigating in the same tab
+   - refresh resets puzzle (solve again)
+========================================================= */
+const GEAR_SOLVED_KEY = "plushy_gearSolved_session_v1";
+
+/* If the page was reloaded, wipe the solved flag so you must solve again */
+(function wipeSolvedOnReload() {
+    try {
+        const nav = performance.getEntriesByType("navigation")[0];
+        const type = nav?.type || "navigate";
+
+        // Any refresh/reload of this page resets the puzzle
+        if (type === "reload") {
+            sessionStorage.removeItem(GEAR_SOLVED_KEY);
+        }
+    } catch (e) {
+        // If we can't detect, do nothing (better than breaking)
+    }
+})();
+
+function setGearSolvedSession() {
+    try { sessionStorage.setItem(GEAR_SOLVED_KEY, "true"); } catch (e) {}
+}
+
+function isGearSolvedSession() {
+    try { return sessionStorage.getItem(GEAR_SOLVED_KEY) === "true"; } catch (e) { return false; }
+}
+
+function applyGearSolvedUI() {
+    // hide draggables
+    document.querySelectorAll(".gear").forEach(g => g.classList.add("hidden"));
+
+    // show finals
+    Object.values(finalPositions).forEach(finalEl => {
+        if (finalEl) finalEl.classList.remove("hidden");
+    });
+
+    showPasswordBox();
+}
+
+function applyGearUnsolvedUI() {
+    // show draggables
+    document.querySelectorAll(".gear").forEach(g => g.classList.remove("hidden"));
+
+    // hide finals
+    Object.values(finalPositions).forEach(finalEl => {
+        if (finalEl) finalEl.classList.add("hidden");
+    });
+
+    // hide password + hint
+    passwordBox.classList.add("hidden");
+    hideHintWrap();
+
+    gearsInserted = { blue:false, pink:false, red:false, yellow:false };
+}
+
+/* Restore when arriving from other pages (same tab) */
+(function restoreGearSession() {
+    if (isGearSolvedSession()) {
+        gearsInserted = { blue:true, pink:true, red:true, yellow:true };
+        applyGearSolvedUI();
+    } else {
+        applyGearUnsolvedUI();
+    }
+})();
+
+
+
+/* ========= REAL SNAPSHOT-BASED GIF FREEZE + JUMPSCARE ========= */
+function freezePlaygroundGifs() {
+    // Only the four main playground gifs, not virus clones
+    const gifSelectors = [
+        ".tetherball-gif",
+        ".seesaw-gif",
+        ".tickles-gif",
+        ".playground-banner-gif"
+    ];
+
+    gifSelectors.forEach(sel => {
+        const img = document.querySelector(sel);
+        if (!img) return;
+
+        try {
+            const rect = img.getBoundingClientRect();
+            const w = rect.width || img.naturalWidth;
+            const h = rect.height || img.naturalHeight;
+            if (!w || !h) return;
+
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+
+            canvas.width = w;
+            canvas.height = h;
+
+            ctx.drawImage(img, 0, 0, w, h);
+
+            const stillDataUrl = canvas.toDataURL("image/png");
+
+            img.style.width = w + "px";
+            img.style.height = h + "px";
+
+            img.dataset.oldsrc = img.src;
+            img.src = stillDataUrl;
+
+        } catch (e) {
+            console.warn("Freeze failed for", sel, e);
+        }
+    });
+}
+
+/* ========= SUBMIT PASSWORD — FREEZE + JUMPSCARE + ENTER KEY SUPPORT ========= */
+function submitPassword() {
+    let v = passwordInput.value.trim().toLowerCase();
+
+    if (passwordInput.dataset.preset === "true") v = "";
+
+    if (v === "tickles") {
+        // Close keyboard immediately on correct password
+        hidePwKeyboard();
+
+        document.querySelectorAll("audio").forEach(a => {
+            a.pause();
+            a.currentTime = 0;
+        });
+
+        freezePlaygroundGifs();
+
+        setTimeout(() => {
+            const jumpscare = document.getElementById("plushyFaceJump");
+            const laugh = document.getElementById("plushyLaugh");
+
+            jumpscare.classList.remove("hidden");
+
+            laugh.volume = 1.0;
+            laugh.play();
+
+            laugh.onended = () => {
+                window.location.replace("secret.html");
+            };
+
+        }, 4000);
+
+    } else {
+        errorSound.currentTime = 0;
+        errorSound.play();
+        passwordInput.value = "";
+        passwordInput.dataset.preset = "false";
+        passwordInput.focus();
+    }
+}
+
+/* CLICK SUBMIT */
+passwordBtn.addEventListener("click", submitPassword);
+
+/* PRESS ENTER TO SUBMIT (hardware keyboard) */
+passwordInput.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+        e.preventDefault();
+        submitPassword();
+    }
+});
+
+/* Password placeholder */
+function setupPasswordField() {
+    passwordInput.value = "PASSWORD";
+    passwordInput.dataset.preset = "true";
+
+    function clearPreset() {
+        if (passwordInput.dataset.preset === "true") {
+            passwordInput.value = "";
+            passwordInput.dataset.preset = "false";
+        }
+    }
+
+    passwordInput.addEventListener("focus", clearPreset);
+    passwordInput.addEventListener("input", clearPreset);
+
+    passwordInput.addEventListener("blur", () => {
+        if (passwordInput.value.trim() === "") {
+            passwordInput.value = "PASSWORD";
+            passwordInput.dataset.preset = "true";
+        }
+    });
+}
+setupPasswordField();
+
+
+/* DRAG GEARS */
+document.querySelectorAll(".gear").forEach(gear => {
+    let offsetX = 0, offsetY = 0;
+
+    gear.addEventListener("pointerdown", e => {
+        e.preventDefault();
+        const r = gear.getBoundingClientRect();
+        offsetX = e.clientX - r.left;
+        offsetY = e.clientY - r.top;
+
+        gear.setPointerCapture(e.pointerId);
+
+        function move(ev) {
+            gear.style.left = ev.clientX - offsetX + "px";
+            gear.style.top  = ev.clientY - offsetY + "px";
+        }
+
+        function up(ev) {
+            gear.releasePointerCapture(ev.pointerId);
+            gear.removeEventListener("pointermove", move);
+            gear.removeEventListener("pointerup", up);
+
+            const finalSpot = finalPositions[gear.dataset.gear];
+            if (!finalSpot) return;
+
+            if (isTouching(gear, dropZone)) {
+                gear.classList.add("hidden");
+                finalSpot.classList.remove("hidden");
+                gearSound.play();
+
+gearsInserted[gear.dataset.gear] = true;
+
+if (Object.values(gearsInserted).every(v => v)) {
+    unlockSound.play();
+
+    // persist only for this tab session (until refresh)
+    setGearSolvedSession();
+
+    applyGearSolvedUI();
+}
+
+            }
+        }
+
+        gear.addEventListener("pointermove", move);
+        gear.addEventListener("pointerup", up);
+    });
+});
+
+/* AOL CHAT LOGIC */
+let state = "waiting_first";
+let locked = false;
+let timeCount = 0;
+let nagInterval = null;
+
+/* OPEN IM WINDOW */
+function openIM() {
+
+    if (virusStage === 4) return;
+
+    aolWindow.classList.remove("hidden");
+
+    // Always reset previous drag offsets
+    aolWindow.style.left = "";
+    aolWindow.style.top  = "";
+    aolWindow.style.transform = "";
+
+    const isMobile   = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+    const isPortrait = window.matchMedia("(orientation: portrait)").matches;
+
+// Portrait mobile: center + scale
+if (isMobile && isPortrait) {
+    aolWindow.style.position = "fixed";
+    aolWindow.style.left = "15%";
+    aolWindow.style.top  = "20%";
+    aolWindow.style.transform = "translate(-50%, -50%) scale(1.3)";
+    aolWindow.style.transformOrigin = "center center";
+}
+// Landscape mobile & desktop: normal centering
+else {
+    aolWindow.style.position = "fixed";
+    aolWindow.style.left = "50%";
+    aolWindow.style.top  = "50%";
+    aolWindow.style.transform = "translate(-50%, -50%)";
+    aolWindow.style.transformOrigin = "center center";
+}
+
+// Hide keyboards when opening IM
+aolKeyboard.classList.remove("show");
+hidePwKeyboard();
+
+// Enable input
+aolInput.style.pointerEvents = "auto";
+aolInput.removeAttribute("readonly");
+
+
+    updateReadonlyMode();
+    ringSound.play().catch(()=>{});
+    aolInput.focus();
+}
+
+/* CLOSE IM WINDOW */
+function closeIM() {
+    aolWindow.classList.add("hidden");
+    aolKeyboard.classList.remove("show");
+    aolWindow.style.transform = "";
+    locked = false;
+}
+
+aolCloseBtn.addEventListener("click", closeIM);
+
+/* DRAGGING LEFT HALF */
+(function() {
+    let dragging = false;
+    let offX = 0, offY = 0;
+    const dragZone = document.getElementById("dragZone");
+
+    dragZone.addEventListener("pointerdown", e => {
+        if (virusStage === 4) return;
+
+        dragging = true;
+
+        // STEP 1: Get the current REAL on-screen position (including transform)
+        const rect = aolWindow.getBoundingClientRect();
+
+        // STEP 2: Lock that position into left/top BEFORE removing transform
+        aolWindow.style.left = rect.left + "px";
+        aolWindow.style.top  = rect.top  + "px";
+
+        // STEP 3: Now safely remove centering transform (no jumping)
+        aolWindow.style.transform = "none";
+
+        // STEP 4: Compute pointer offset
+        offX = e.clientX - rect.left;
+        offY = e.clientY - rect.top;
+
+        dragZone.setPointerCapture(e.pointerId);
+    });
+
+    dragZone.addEventListener("pointermove", e => {
+        if (!dragging) return;
+
+        let newX = e.clientX - offX;
+        let newY = e.clientY - offY;
+
+        const w = aolWindow.offsetWidth;
+        const h = aolWindow.offsetHeight;
+
+        newX = Math.max(0, Math.min(window.innerWidth  - w, newX));
+        newY = Math.max(0, Math.min(window.innerHeight - h, newY));
+
+        aolWindow.style.left = newX + "px";
+        aolWindow.style.top  = newY + "px";
+    });
+
+    dragZone.addEventListener("pointerup", e => {
+        dragging = false;
+        dragZone.releasePointerCapture(e.pointerId);
+    });
+})();
+
+/* SEND USER MESSAGE */
+function sendUser() {
+    if (virusStage === 4) return;
+
+    const text = aolInput.value.trim();
+    if (!text) return;
+
+    addMsg("Child@h3art", "aol-red", text);
+    sendSound.play().catch(() => {});
+
+    aolInput.value = "";
+    aolInput.focus();
+
+    handleUser(text);
+
+// Check for "play time" or "playtime" (any case)
+if (/play\s?time/i.test(text)) {
+    // Delay 2 seconds before showing link
+    setTimeout(sendPlushyPlayLink, 2000);
+}
+}
+
+aolSendBtn.addEventListener("click", sendUser);
+
+aolInput.addEventListener("keydown", e => {
+    if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendUser();
+    }
+});
+
+/* ADD MESSAGE */
+function addMsg(user, cls, text) {
+    const p = document.createElement("p");
+    const s = document.createElement("span");
+    s.textContent = user + ":";
+    s.className = cls;
+    p.appendChild(s);
+    p.appendChild(document.createTextNode(" " + text));
+    aolChatArea.appendChild(p);
+    aolChatArea.scrollTop = aolChatArea.scrollHeight;
+}
+
+/* PLUSHY RESPONSE — NOW INTERRUPT-PROOF */
+function plushy(text, delay = 800, unlockAfter = true) {
+    if (virusStage === 4) return;
+    setTimeout(() => {
+        addMsg("MrPlushy", "aol-blue", text);
+        recvSound.play().catch(() => {});
+        locked = false;
+    }, delay);
+}
+
+/* SEND MR. PLUSHY "PLAY ME" LINK */
+function sendPlushyPlayLink() {
+    const p = document.createElement("p");
+    const s = document.createElement("span");
+    s.textContent = "MrPlushy:";
+    s.className = "aol-blue";
+    p.appendChild(s);
+
+    const link = document.createElement("a");
+    link.href = "go_to_carousel.php";      // Redirects through session check
+    link.textContent = "play me";
+    link.style.color = "#00f";            // blue
+    link.style.textDecoration = "underline"; // underlined
+    link.style.fontWeight = "bold";       // bold
+
+    p.appendChild(document.createTextNode(" "));
+    p.appendChild(link);
+
+    aolChatArea.appendChild(p);
+    aolChatArea.scrollTop = aolChatArea.scrollHeight;
+    recvSound.play().catch(() => {});
+}
+/* ============================================================
+   MAIN USER HANDLER — FULL GAME LOGIC (FINAL VERSION)
+   → 2-second delay on EVERY message
+   → Completely interrupt-proof (ignores spam)
+   → Never repeats or glitches
+=========================================================== */
+function plushy(text) {
+    if (virusStage === 4) return;
+    locked = true;
+    setTimeout(() => {
+        addMsg("MrPlushy", "aol-blue", text);
+        recvSound.play().catch(() => {});
+        locked = false;
+    }, 2000); // ← 2 second delay on every single message
+}
+
+function handleUser(raw) {
+    if (locked) return;                    // ← SPAM PROTECTION
+    if (virusStage === 4) return;
+    const lower = raw.toLowerCase();
+
+    // Block input while counting
+    if (state === "counting_time_1" || state === "counting_time_2") return;
+
+    /* FIRST MESSAGE */
+    if (state === "waiting_first") {
+        state = "marco";
+        plushy("Marco");
+        return;
+    }
+
+    /* MARCO → POLO */
+    if (state === "marco") {
+        if (lower.includes("polo")) {
+            state = "kidcheck";
+            locked = true;
+            setTimeout(() => plushy("FOUND YOU"), 3000);
+            setTimeout(() => plushy("before we play more u must tell me something very very important"), 8000);
+            setTimeout(() => plushy("r u a kid?"), 11000);
+            setTimeout(() => plushy("Or a grown up?"), 14000);
+            setTimeout(() => { locked = false; }, 16000);
+        } else {
+            plushy("MARCO!!!!");
+        }
+        return;
+    }
+
+    /* KID CHECK */
+    if (state === "kidcheck") {
+        if (lower.includes("adult") || lower.includes("grown")) {
+            locked = true;
+            setTimeout(() => {
+                doorSound.play().catch(() => {});
+                state = "adult_ended";  // dead-end state
+            }, 2000);
+            return;
+        }
+        if (lower.includes("kid")) {
+            state = "goat_wait";
+            locked = true;
+            setTimeout(() => plushy("wait"), 3000);
+            setTimeout(() => plushy("so u r a goat???"), 6000);
+            setTimeout(() => plushy("get it?"), 9000);
+            setTimeout(() => plushy("haha"), 11000);
+            setTimeout(() => locked = false, 12500);
+            return;
+        }
+        plushy("kid or grown up????");
+        return;
+    }
+
+    /* GOAT SEQUENCE */
+    if (state === "goat_wait") {
+        state = "goat_sequence";
+        locked = true;
+        plushy("hang on!");
+        setTimeout(() => plushy("im trying to show u something funny"), 6000);
+        setTimeout(() => plushy("k"), 12000);
+        setTimeout(() => plushy("finished"), 15000);
+        setTimeout(() => plushy("u ready to see it???"), 19000);
+        setTimeout(() => plushy("( . )( . )"), 22000);
+        setTimeout(() => plushy("hahaha"), 24000);
+        setTimeout(() => plushy("HAHAHAHA"), 26000);
+        setTimeout(() => plushy("HAHAHAHAHAHSGFHBAGIHREIHA"), 31000);
+        setTimeout(() => {
+            plushy("wanna play another game???????");
+            locked = false;
+            state = "timegame_waiting_for_user_trigger";
+        }, 36000);
+        return;
+    }
+
+    /* TIME GAME TRIGGER */
+    if (state === "timegame_waiting_for_user_trigger") {
+        const t = extractTime(raw);
+        if (t !== null) {
+            state = "counting_time_1";
+            plushy("what time is it Mr. Plushy?");
+            countTo(t, () => {
+                state = "waiting_time_2";
+                plushy("what time is it Mr. Plushy?");
+            });
+        } else {
+            plushy("what time is it Mr. Plushy?");
+            state = "waiting_time_1";
+        }
+        return;
+    }
+
+    /* ROUND 1 */
+    if (state === "waiting_time_1") {
+        const t = extractTime(raw);
+        if (!t) { plushy("WHAT TIME IS IT MR PLUSHY!!!!"); return; }
+        state = "counting_time_1";
+        countTo(t, () => {
+            state = "waiting_time_2";
+            plushy("what time is it Mr. Plushy?");
+        });
+        return;
+    }
+
+    /* ROUND 2 */
+    if (state === "waiting_time_2") {
+        const t = extractTime(raw);
+        if (!t) { plushy("WHAT TIME IS IT MR PLUSHY!!!!"); return; }
+        state = "counting_time_2";
+        countTo(t, () => {
+            state = "waiting_time_final";
+            plushy("WHAT TIME IS IT MR PLUSHY!!!");
+            startNag();
+        });
+        return;
+    }
+}
+
+
+/* ============================================================
+   REQUIRED TIME GAME FUNCTIONS (DO NOT TOUCH)
+=========================================================== */
+function extractTime(raw) {
+    const lower = raw.toLowerCase();
+    const num = parseInt(lower);
+    if (!isNaN(num)) return num;
+
+    const words = {
+        one:1, two:2, three:3, four:4, five:5,
+        six:6, seven:7, eight:8, nine:9, ten:10,
+        eleven:11, twelve:12
+    };
+
+    for (const w in words) {
+        if (lower.includes(w)) return words[w];
+    }
+
+    return null;
+}
+
+function countTo(num, callback) {
+    let i = 1;
+
+    const tick = () => {
+
+        // Finished counting → wait 4 sec, then callback
+        if (i > num) {
+            setTimeout(callback, 4000);
+            return;
+        }
+
+        // Plushy says number
+        plushy(String(i));
+
+        i++;
+
+        // Wait 2 seconds before next number
+        setTimeout(tick, 2000);
+    };
+
+    tick();
+}
+
+function startNag() {
+    stopNag();
+    nagInterval = setInterval(() => {
+        plushy("WHAT TIME IS IT MR PLUSHY!!!!");
+    }, 5000);
+}
+
+function stopNag() {
+    if (nagInterval) {
+        clearInterval(nagInterval);
+        nagInterval = null;
+    }
+}
+
+/* MOBILE LANDSCAPE = CHAT DISAPPEARS — BUT COMES BACK IN PORTRAIT */
+let chatKilled = false;
+
+function handleMobileOrientation() {
+    const isMobile = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+    const isLandscape = window.innerWidth > window.innerHeight;
+
+    if (isMobile && isLandscape && !chatKilled) {
+        // ——— LANDSCAPE: KILL CHAT ———
+        chatKilled = true;
+        aolWindow.style.display = "none";           // hide window
+        aolKeyboard.classList.remove("show");
+        aolInput.disabled = true;
+        aolInput.value = "";
+        locked = true;
+
+        // Block the Instant Message link
+        const imLink = document.getElementById("imLink");
+        if (imLink) imLink.onclick = e => { e.preventDefault(); return false; };
+    }
+    else if (isMobile && !isLandscape && chatKilled) {
+        // ——— BACK TO PORTRAIT: FULLY RESTORE CHAT ———
+        chatKilled = false;
+        locked = false;
+        aolInput.disabled = false;
+
+        // IMPORTANT: reset display + class so openIM() works again
+        aolWindow.style.display = "";               // remove inline "none"
+        aolWindow.classList.add("hidden");          // restore normal hidden state
+
+        // Fully restore the Instant Message link
+        const imLink = document.getElementById("imLink");
+        if (imLink) {
+            imLink.onclick = function(e) {
+                e.preventDefault();
+                openIM();
+                return false;
+            };
+        }
+    }
+}
+
+// Run on every change + once on load
+window.addEventListener("resize", handleMobileOrientation);
+window.addEventListener("orientationchange", handleMobileOrientation);
+handleMobileOrientation();
+
+</script>
+
+
+
+<script>
+/* =========================================================
+   STUFFY DRAG + DROP ZONE
+   POINTER SAFE (DESKTOP + MOBILE + SAFARI)
+========================================================= */
+
+const stuffyDropZone = document.getElementById("dropZone");
+
+document.querySelectorAll(".stuffy-wrap").forEach(stuffy => {
+    let offsetX = 0;
+    let offsetY = 0;
+
+    stuffy.addEventListener("pointerdown", e => {
+        if (stuffy.dataset.locked === "true") return;
+        e.preventDefault();
+
+        const rect = stuffy.getBoundingClientRect();
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
+
+        stuffy.setPointerCapture(e.pointerId);
+
+        function move(ev) {
+            stuffy.style.left = (ev.clientX - offsetX) + "px";
+            stuffy.style.top  = (ev.clientY - offsetY) + "px";
+
+            // live hover feedback
+            if (isOverlapping(stuffy, stuffyDropZone)) {
+                stuffyDropZone.classList.add("active");
+            } else {
+                stuffyDropZone.classList.remove("active");
+            }
+        }
+
+        function up(ev) {
+            stuffy.releasePointerCapture(ev.pointerId);
+            document.removeEventListener("pointermove", move);
+            document.removeEventListener("pointerup", up);
+
+            // final drop check
+            if (isOverlapping(stuffy, stuffyDropZone)) {
+                handleDrop(stuffy);
+            }
+
+            stuffyDropZone.classList.remove("active");
+        }
+
+        document.addEventListener("pointermove", move);
+        document.addEventListener("pointerup", up);
+    });
+});
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function isOverlapping(a, b) {
+    const ar = a.getBoundingClientRect();
+    const br = b.getBoundingClientRect();
+
+    return !(
+        ar.right < br.left ||
+        ar.left > br.right ||
+        ar.bottom < br.top ||
+        ar.top > br.bottom
+    );
+}
+
+function handleDrop(stuffy) {
+
+    // 🔥 START MUSIC + VIRUS (ONCE)
+    startMusicInstant();
+
+    // Fade splash
+    const splash = document.getElementById("fakeSplash");
+    if (splash) splash.classList.add("fade-out");
+
+    // Fade ALL stuffies (including the one dropped)
+    document.querySelectorAll(".stuffy-wrap").forEach(el => {
+        el.classList.add("fade-out");
+        el.dataset.locked = "true";
+    });
+
+    // Remove drop zone so it never interferes again
+    const dz = document.getElementById("dropZone");
+    if (dz) dz.remove();
+
+    // Hard remove after fade finishes
+    setTimeout(() => {
+        splash?.remove();
+        document.querySelectorAll(".stuffy-wrap").forEach(el => el.remove());
+    }, 550);
+}
+
+
+</script>
+
+
+
+
+
+<!-- VIRUS SYSTEM (unchanged except blue-screen fix) -->
+<script>
+let virusTimer = 0;
+let phase2TicklesStarted = false;
+let floodInterval = null;
+let cloneCount = 0;
+
+/* timeline */
+const PHASE1_START = 130;
+const PHASE2_START = 180;
+const FLOOD_START  = 246;
+const BLUE_TIME    = 291;
+
+/* glitching audio except bg music */
+let audioGlitchLocked = false;
+
+const originalAudioPlay = Audio.prototype.play;
+Audio.prototype.play = function() {
+    if (this.id === "bgMusic") {
+        this.playbackRate = 1;
+        this.volume = 1;
+    } else if (virusStage >= 2 || audioGlitchLocked) {
+        audioGlitchLocked = true; // 🔒 lock once it starts
+        this.playbackRate = 0.7 + Math.random() * 0.6;
+        this.volume = 0.3 + Math.random() * 0.4;
+    } else {
+        this.playbackRate = 1;
+        this.volume = 1;
+    }
+    return originalAudioPlay.call(this);
+};
+
+function rand(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
+function fullScreenCoords() {
+    return {
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight
+    };
+}
+
+
+function getTicklesBaseSize() {
+    const t = document.querySelector(".tickles-gif");
+    if (!t) return { w: 120, h: 120 };
+    const r = t.getBoundingClientRect();
+    return { w: r.width, h: r.height };
+}
+
+function spawnClone(options = {}) {
+    const { allowOthers = false } = options;
+    if (cloneCount >= 700) return;
+
+    let src = "assets/tickles.gif";
+
+    if (allowOthers && Math.random() < 0.05) {
+        const others = [
+            "assets/tetherball.gif",
+            "assets/seesaw.gif",
+            "assets/playground_banner.gif"
+        ];
+        src = others[Math.floor(Math.random() * others.length)];
+    }
+
+    const img = document.createElement("img");
+    img.src = src;
+    img.className = "virus-clone-gif";
+
+    const base = getTicklesBaseSize();
+    const scale = 0.75 + Math.random() * 0.60;
+    img.style.width = (base.w * scale) + "px";
+
+    const pos = fullScreenCoords();
+    img.style.left = pos.x + "px";
+    img.style.top  = pos.y + "px";
+    img.style.transform = "translate(-50%, -50%)";
+
+    document.body.appendChild(img);
+    cloneCount++;
+}
+
+function spawnTicklesAnywhere() {
+    spawnClone({ allowOthers: false });
+}
+
+function showBlueScreen() {
+    const bs = document.getElementById("bluescreen");
+    const img = bs.querySelector(".bluescreen-img");
+
+    let bsod = "assets/blue_screen_of_death.jpg";
+
+    if (window.matchMedia("(max-width: 600px) and (orientation: portrait)").matches) {
+        bsod = "assets/bsod2.jpg";
+    }
+
+    if (window.matchMedia("(max-width: 600px) and (orientation: landscape)").matches) {
+        bsod = "assets/bsod1.jpg";
+    }
+
+    img.src = bsod;
+    bs.classList.remove("hidden");
+}
+
+function randomFlash() {
+    if (virusStage < 2 || virusStage >= 4) return;
+    document.body.classList.add("glitch-flash");
+    setTimeout(() => {
+        document.body.classList.remove("glitch-flash");
+    }, 80 + Math.random() * 70);
+}
+
+/* =========================================================
+   DARK GLITCH EFFECTS
+========================================================= */
+function fullInvertPulse() {
+    if (virusStage < 2 || virusStage >= 4) return;
+    document.body.classList.add("glitch-invert");
+    setTimeout(() => {
+        document.body.classList.remove("glitch-invert");
+    }, 150 + Math.random() * 200);
+}
+
+function voidPulse() {
+    if (virusStage < 2 || virusStage >= 4) return;
+    document.body.classList.add("glitch-void");
+    setTimeout(() => {
+        document.body.classList.remove("glitch-void");
+    }, 180 + Math.random() * 240);
+}
+
+function randomImageBlackout() {
+    if (virusStage < 2 || virusStage >= 4) return;
+
+    const imgs = document.querySelectorAll(".bg-wrapper img, .virus-clone-gif");
+    if (!imgs.length) return;
+
+    const pick = imgs[Math.floor(Math.random() * imgs.length)];
+    pick.classList.add("glitch-blackout");
+
+    setTimeout(() => {
+        pick.classList.remove("glitch-blackout");
+    }, 250 + Math.random() * 350);
+}
+
+function grayMelt() {
+    if (virusStage < 2 || virusStage >= 4) return;
+    document.body.classList.add("glitch-graymelt");
+    setTimeout(() => {
+        document.body.classList.remove("glitch-graymelt");
+    }, 300 + Math.random() * 500);
+}
+
+/* =========================================================
+   PHASE 2 — EARLY TICKLES BURST (RESTORED)
+========================================================= */
+function startPhase2Tickles() {
+    // spawn 4–6 tickles slowly
+    const count = Math.floor(Math.random() * 3) + 4;
+    let delay = 0;
+
+    for (let i = 0; i < count; i++) {
+        delay += 8 + Math.random() * 2;
+
+        setTimeout(() => {
+            // only spawn if still in phase 2
+            if (virusStage === 2) {
+                spawnTicklesAnywhere();
+            }
+        }, delay * 1000);
+    }
+}
+
+let virusStarted = false;
+
+/* =========================================================
+   VIRUS TIMELINE
+========================================================= */
+let virusInterval;
+
+function startVirusTimeline() {
+    virusInterval = setInterval(() => {
+        virusTimer++;
+
+        if (virusTimer === PHASE1_START) {
+            virusStage = 1;
+            document.body.classList.add("glitch-phase-1");
+        }
+
+        if (virusTimer === PHASE2_START) {
+            virusStage = 2;
+            document.body.classList.add("glitch-phase-2");
+
+            if (!phase2TicklesStarted) {
+                phase2TicklesStarted = true;
+                startPhase2Tickles();
+            }
+        }
+
+        if (virusStage >= 2 && virusStage < 4) {
+            if (Math.random() < 0.25) randomFlash();
+            if (Math.random() < 0.15) fullInvertPulse();
+            if (Math.random() < 0.10) voidPulse();
+            if (Math.random() < 0.20) randomImageBlackout();
+            if (Math.random() < 0.12) grayMelt();
+        }
+
+        if (virusTimer === FLOOD_START) {
+            floodInterval = setInterval(() => {
+                if (virusStage !== 4) {
+                    spawnClone({ allowOthers: true });
+                }
+            }, 140);
+        }
+    }, 1000);
+}
+
+
+
+/* =========================================================
+   BSOD — MANUAL TRIGGER
+========================================================= */
+function triggerBSOD() {
+    if (virusStage === 4) return;
+
+    virusStage = 4;
+
+    showBlueScreen();
+    onBSOD();
+
+    if (floodInterval) clearInterval(floodInterval);
+    if (virusInterval) clearInterval(virusInterval);
+
+    document.body.className = "";
+    document.querySelectorAll(".virus-clone-gif").forEach(el => el.remove());
+}
+</script>
+
+
+
+
+<script>
+/* =========================================================
+   HOME BACKGROUND MUSIC — FINAL HYBRID LOGIC
+   Splash = autoplay
+   Skip splash = click to start
+========================================================= */
+
+let splashVisible = true;
+let musicStarted = false;
+let musicLocked = false;
+
+/* controls whether autoplay is allowed */
+let allowAutoplay = false;
+
+const bgMusic = document.getElementById("bgMusic");
+
+/* No looping — song ends once */
+if (bgMusic) bgMusic.loop = false;
+
+/* =========================================================
+   START MUSIC (INSTANT)
+========================================================= */
+function startMusicInstant() {
+    if (musicStarted) return;
+    if (musicLocked) return;
+    if (!bgMusic) return;
+
+    musicStarted = true;
+    bgMusic.currentTime = 0;
+    bgMusic.volume = 1;
+    bgMusic.play().catch(() => {});
+
+    // 🔥 START VIRUS EXACTLY ONCE
+    if (!virusStarted) {
+        virusStarted = true;
+        startVirusTimeline();
+        console.log("🔥 VIRUS TIMELINE STARTED");
+    }
+}
+
+/* =========================================================
+   SPLASH EXIT — NATURAL (STUFFIES)
+   → AUTOPLAY ENABLED
+========================================================= */
+function onSplashExit() {
+    splashVisible = false;
+    allowAutoplay = true;
+
+    const splash = document.getElementById("fakeSplash");
+    if (splash) {
+        splash.classList.add("fade-out");
+        splash.style.pointerEvents = "none";
+    }
+
+    startMusicInstant();
+}
+
+/* =========================================================
+   SPLASH SKIPPED (FROM OTHER PAGES)
+   → CLICK REQUIRED
+========================================================= */
+const skipSplash = sessionStorage.getItem("skipSplash") === "true";
+
+if (skipSplash) {
+    sessionStorage.removeItem("skipSplash");
+
+    splashVisible = false;
+    allowAutoplay = false;
+
+    const splash = document.getElementById("fakeSplash");
+    if (splash) {
+        splash.style.display = "none";
+        splash.style.pointerEvents = "none";
+    }
+}
+
+/* =========================================================
+   CLICK ANYWHERE FALLBACK
+========================================================= */
+document.addEventListener("click", () => {
+    if (!splashVisible && !allowAutoplay) startMusicInstant();
+}, { passive: true });
+
+/* =========================================================
+   BSOD — HARD STOP + PERMANENT LOCK
+========================================================= */
+function onBSOD() {
+    if (musicLocked) return;
+
+    musicLocked = true;
+    musicStarted = false;
+
+    if (bgMusic) {
+        bgMusic.pause();
+        bgMusic.currentTime = 0;
+    }
+}
+
+/* =========================================================
+   WHEN SONG ENDS → BSOD
+========================================================= */
+if (bgMusic) {
+    bgMusic.addEventListener("ended", () => {
+        musicLocked = true;
+        musicStarted = false;
+        triggerBSOD();
+    });
+}
+
+/* =========================================================
+   BSOD VISIBILITY BACKUP
+========================================================= */
+const bsod = document.getElementById("bluescreen");
+if (bsod) {
+    const obs = new MutationObserver(() => {
+        const visible =
+            !bsod.classList.contains("hidden") &&
+            bsod.style.display !== "none";
+
+        if (visible) onBSOD();
+    });
+
+    obs.observe(bsod, {
+        attributes: true,
+        attributeFilter: ["class", "style"]
+    });
+}
+</script>
+
+<script>
+/* =========================================================
+   AUTO-START GLITCH ON FIRST USER INTERACTION (NO SPLASH) — FIXED
+   Only starts if virus hasn't already begun
+========================================================= */
+(function () {
+    let ran = false;
+
+    function startGlitchOnFirstClick() {
+        if (ran) return;
+        if (virusStarted) return;  // ← This line prevents double start
+        ran = true;
+
+        if (typeof startVirusTimeline === "function") {
+            startVirusTimeline();
+            virusStarted = true;   // Mark it as started
+            console.log("🔥 VIRUS TIMELINE STARTED (from click fallback)");
+        }
+    }
+
+    document.addEventListener("click", startGlitchOnFirstClick, { once: true });
+})();
+</script>
+
+
+
+</body><div style="position: fixed; top: 0px; left: 0px; z-index: 2147483647;"></div></html>
