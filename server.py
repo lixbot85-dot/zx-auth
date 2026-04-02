@@ -3,24 +3,28 @@ from flask import Flask, send_file, jsonify
 
 app = Flask(__name__)
 
+# ===== BASE PATHS =====
 BASE_DIR = os.path.abspath("files")
+BASE_PATH = os.path.abspath(".")
+SCRIPTS_PATH = os.path.join(BASE_PATH, "scripts")
+LIBRARY_PATH = os.path.join(BASE_PATH, "library")
+
 
 # ===== HOME =====
 @app.route("/")
 def home():
     return jsonify({
         "status": "online",
-        "service": "ZX FILE SERVER"
+        "service": "ZX SERVER"
     })
 
 
-# ===== FILE EXPLORER JSON =====
+# ===== FILE EXPLORER (JSON) =====
 @app.route("/files/", defaults={"req_path": ""})
 @app.route("/files/<path:req_path>")
 def files(req_path):
     abs_path = os.path.join(BASE_DIR, req_path)
 
-    # segurança básica
     if not abs_path.startswith(BASE_DIR):
         return jsonify({"error": "acesso negado"}), 403
 
@@ -31,7 +35,7 @@ def files(req_path):
     if os.path.isfile(abs_path):
         return send_file(abs_path)
 
-    # pasta → retorna JSON
+    # pasta → JSON
     items = []
 
     for file in os.listdir(abs_path):
@@ -47,6 +51,45 @@ def files(req_path):
         "path": f"/{req_path}",
         "items": items
     })
+
+
+# ===== ZXLIB =====
+@app.route("/zxlib")
+def zxlib():
+    path = os.path.join(SCRIPTS_PATH, "lib.lua")
+
+    if not os.path.exists(path):
+        return "ZXLIB não encontrado", 404
+
+    response = send_file(path, mimetype="text/plain")
+    response.headers["Cache-Control"] = "no-store"
+    return response
+
+
+# ===== ZXHUB =====
+@app.route("/zxhub")
+def zxhub():
+    path = os.path.join(SCRIPTS_PATH, "zxhub.lua")
+
+    if not os.path.exists(path):
+        return "ZXHUB não encontrado", 404
+
+    response = send_file(path, mimetype="text/plain")
+    response.headers["Cache-Control"] = "no-store"
+    return response
+
+
+# ===== MUSIC LIST =====
+@app.route("/musiclist")
+def musiclist():
+    path = os.path.join(LIBRARY_PATH, "songlist.json")
+
+    if not os.path.exists(path):
+        return jsonify({"error": "arquivo não encontrado"}), 404
+
+    response = send_file(path, mimetype="application/json")
+    response.headers["Cache-Control"] = "no-store"
+    return response
 
 
 # ===== RUN =====
