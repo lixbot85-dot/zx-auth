@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZX Auth – Galeria de Scripts</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:linear-gradient(135deg,#0a3d0a,#106410,#2a7f2a); color:#e0f7e0; min-height:100vh; display:flex; flex-direction:column; align-items:center; }
+header { width:100%; background:rgba(0,0,0,0.4); padding:25px; text-align:center; box-shadow:0 3px 8px rgba(0,0,0,0.3); border-bottom:2px solid #50c878; }
+header h1 { font-size:3em; color:#a0ff90; text-shadow:1px 1px 5px #004d00; }
+.language-toggle { margin-top:10px; }
+.language-toggle button { margin:0 5px; padding:5px 12px; border:none; border-radius:10px; cursor:pointer; font-weight:bold; background:#50c878; color:#004d00; transition:0.3s; }
+.language-toggle button:hover { background:#3fa362; }
+
+.tabs { display:flex; justify-content:center; margin-top:20px; gap:10px; }
+.tab { padding:10px 25px; border-radius:12px 12px 0 0; cursor:pointer; background:rgba(0,0,0,0.3); border:2px solid #50c878; border-bottom:none; color:#b4ffb4; font-weight:bold; transition:0.3s; }
+.tab.active { background:rgba(0,0,0,0.5); color:#fff; }
+
+main { flex:1; width:90%; max-width:1200px; display:flex; flex-direction:column; align-items:center; gap:25px; padding-bottom:40px; }
+
+.cards-container { display:flex; flex-wrap:wrap; justify-content:center; gap:20px; width:100%; }
+.card { background:rgba(255,255,255,0.05); padding:15px; border-radius:16px; width:250px; text-align:center; transition:transform 0.3s,background 0.3s; box-shadow:0 5px 15px rgba(0,0,0,0.35); border:2px solid #50c878; display:flex; flex-direction:column; align-items:center; position:relative; }
+.card:hover { background:rgba(255,255,255,0.12); transform:translateY(-5px) scale(1.03); }
+.card h3 { margin:10px 0 5px 0; color:#b4ffb4; font-size:1.2em; }
+.card img { width:100%; height:140px; object-fit:cover; border-radius:12px; margin-bottom:8px; }
+.card p { font-size:0.9em; color:#d0ffd0; margin:4px 0; }
+.card button, .card a { text-decoration:none; background:#50c878; color:#004d00; font-weight:bold; padding:6px 12px; border-radius:10px; display:inline-block; margin:5px 2px; cursor:pointer; border:none; transition:0.3s; }
+.card button:hover, .card a:hover { background:#3fa362; }
+
+footer { width:100%; text-align:center; padding:15px; background:rgba(0,0,0,0.3); color:#c0ffc0; border-top:2px solid #50c878; font-size:0.9em; }
+
+.error-card { background:rgba(255,0,0,0.15); border-color:#ff4444; color:#fff; }
+
+#filter-input { margin:10px 0; padding:8px 12px; border-radius:10px; border:2px solid #50c878; width:80%; max-width:400px; background:rgba(0,0,0,0.2); color:#e0f7e0; }
+
+.badge { display:inline-block; padding:3px 8px; border-radius:8px; font-size:0.75em; margin:2px 2px; background-color:#28a745; color:#fff; }
+
+.tooltip { position:absolute; bottom:100%; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.8); color:#fff; padding:6px 10px; border-radius:8px; font-size:0.8em; display:none; white-space:pre-wrap; width:220px; text-align:left; z-index:10; }
+.card:hover .tooltip { display:block; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1 id="title-header">ZX Auth</h1>
+  <p id="subtitle-header">Painel central para recursos do ZX</p>
+  <div class="language-toggle">
+    <button onclick="setLanguage('pt')">PT</button>
+    <button onclick="setLanguage('en')">EN</button>
+  </div>
+</header>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('resources')"><span id="tab-resources">Recursos</span></div>
+  <div class="tab" onclick="showTab('myscripts')"><span id="tab-myscripts">Meus Scripts</span></div>
+</div>
+
+<main id="resources-tab">
+  <div class="card">
+    <h3 id="discord-title">Entrar no Discord</h3>
+    <a href="https://discord.gg/wR5MDFyyqE" target="_blank" id="discord-btn">Abrir Discord</a>
+  </div>
+  <div class="card">
+    <h3 id="profile-title">Perfil do ZX</h3>
+    <a href="https://scriptblox.com/u/zxrealm" target="_blank" id="profile-btn">Abrir Perfil</a>
+  </div>
+  <div class="card">
+    <h3 id="music-title">Adicionar Música</h3>
+    <a href="/adicionar-musica" id="music-btn">Adicionar Música</a>
+  </div>
+</main>
+
+<main id="myscripts-tab" style="display:none;">
+  <input type="text" id="filter-input" placeholder="Filtrar scripts pelo título..." oninput="filterScripts()">
+  <div class="cards-container" id="scripts-container">
+    <p style="color:#fff;" id="loading-text">Carregando seus scripts...</p>
+  </div>
+</main>
+
+<footer>
+  &copy; 2026 ZX Auth | Desenvolvido por <a href="https://github.com/lixbot85-dot" target="_blank">Lixbot85</a>
+</footer>
+
+<script>
+let language = 'pt';
+const texts = {
+  pt: {
+    headerTitle: "ZX Auth",
+    headerSubtitle: "Painel central para recursos do ZX",
+    tabResources: "Recursos",
+    tabMyScripts: "Meus Scripts",
+    discordTitle: "Entrar no Discord",
+    discordBtn: "Abrir Discord",
+    profileTitle: "Perfil do ZX",
+    profileBtn: "Abrir Perfil",
+    musicTitle: "Adicionar Música",
+    musicBtn: "Adicionar Música",
+    filterPlaceholder: "Filtrar scripts pelo título...",
+    loadingText: "Carregando seus scripts...",
+    slugCopied: "Slug copiado:",
+    codeCopied: "Código do script copiado!",
+    codeError: "Erro ao copiar o código!"
+  },
+  en: {
+    headerTitle: "ZX Auth",
+    headerSubtitle: "Central panel for ZX resources",
+    tabResources: "Resources",
+    tabMyScripts: "My Scripts",
+    discordTitle: "Join Discord",
+    discordBtn: "Open Discord",
+    profileTitle: "ZX Profile",
+    profileBtn: "Open Profile",
+    musicTitle: "Add Music",
+    musicBtn: "Add Music",
+    filterPlaceholder: "Filter scripts by title...",
+    loadingText: "Loading your scripts...",
+    slugCopied: "Slug copied:",
+    codeCopied: "Script code copied!",
+    codeError: "Error copying code!"
+  }
+};
+
+function setLanguage(lang) {
+  language = lang;
+  document.getElementById('title-header').textContent = texts[lang].headerTitle;
+  document.getElementById('subtitle-header').textContent = texts[lang].headerSubtitle;
+  document.getElementById('tab-resources').textContent = texts[lang].tabResources;
+  document.getElementById('tab-myscripts').textContent = texts[lang].tabMyScripts;
+  document.getElementById('discord-title').textContent = texts[lang].discordTitle;
+  document.getElementById('discord-btn').textContent = texts[lang].discordBtn;
+  document.getElementById('profile-title').textContent = texts[lang].profileTitle;
+  document.getElementById('profile-btn').textContent = texts[lang].profileBtn;
+  document.getElementById('music-title').textContent = texts[lang].musicTitle;
+  document.getElementById('music-btn').textContent = texts[lang].musicBtn;
+  document.getElementById('filter-input').placeholder = texts[lang].filterPlaceholder;
+  document.getElementById('loading-text').textContent = texts[lang].loadingText;
+
+  updateCardsLanguage();
+}
+
+function updateCardsLanguage() {
+  document.querySelectorAll('#scripts-container .card').forEach(card => {
+    const tooltip = card.querySelector('.tooltip');
+    if (tooltip) {
+      const desc = tooltip.textContent.includes("Sem descrição") || tooltip.textContent.includes("No description")
+                   ? (language==='pt' ? "Sem descrição disponível." : "No description available.")
+                   : tooltip.textContent;
+      tooltip.textContent = desc;
+    }
+    const viewBtn = card.querySelector('a');
+    if (viewBtn) viewBtn.textContent = (language==='pt' ? "Ver Script" : "View Script");
+    const copySlugBtn = card.querySelectorAll('button')[0];
+    if (copySlugBtn) copySlugBtn.textContent = (language==='pt' ? "Copiar Slug" : "Copy Slug");
+    const copyCodeBtn = card.querySelectorAll('button')[1];
+    if (copyCodeBtn) copyCodeBtn.textContent = (language==='pt' ? "Copiar Código" : "Copy Code");
+  });
+}
+
+function showTab(tab) {
+  document.getElementById('resources-tab').style.display = (tab==='resources')?'flex':'none';
+  document.getElementById('myscripts-tab').style.display = (tab==='myscripts')?'flex':'none';
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+}
+
+let allScripts = [];
+
+async function loadMyScripts() {
+  const container = document.getElementById('scripts-container');
+  container.innerHTML = '';
+  const username = "zxrealm";
+  const url = `https://scriptblox.com/api/script/fetch?owner=${username}`;
+
+  try {
+    const response = await fetch(url);
+    const json = await response.json();
+    if(!json.result || !Array.isArray(json.result.scripts)) throw new Error("API ERROR");
+    allScripts = json.result.scripts;
+    if(allScripts.length===0){ container.innerHTML=`<p style="color:#fff;">Nenhum script público encontrado.</p>`; return; }
+    displayScripts(allScripts);
+  } catch(err) {
+    const errorCard = document.createElement('div');
+    errorCard.className='card error-card';
+    errorCard.textContent="!API ERROR!";
+    container.appendChild(errorCard);
+    console.error(err);
+  }
+}
+
+function displayScripts(scripts) {
+  const container = document.getElementById('scripts-container');
+  container.innerHTML='';
+  scripts.forEach(script=>{
+    const card=document.createElement('div');
+    card.className='card';
+    card.dataset.title = script.title.toLowerCase();
+
+    const img=document.createElement('img');
+    img.src = script.image ? `https://scriptblox.com${script.image}` : 'https://via.placeholder.com/250x140.png?text=ZX+Script';
+    card.appendChild(img);
+
+    const title=document.createElement('h3');
+    title.textContent = script.title || "(No title)";
+    card.appendChild(title);
+
+    const badge=document.createElement('span');
+    badge.className='badge';
+    badge.textContent = script.scriptType || "N/A";
+    card.appendChild(badge);
+
+    const info=document.createElement('p');
+    info.textContent = `Views: ${script.views ?? 0} | Likes: ${script.likes ?? 0}`;
+    card.appendChild(info);
+
+    const tooltip=document.createElement('div');
+    tooltip.className='tooltip';
+    tooltip.textContent = script.description || (language==='pt'?"Sem descrição disponível.":"No description available.");
+    card.appendChild(tooltip);
+
+    const openBtn=document.createElement('a');
+    openBtn.href=`https://scriptblox.com/script/${script.slug}`;
+    openBtn.target="_blank";
+    openBtn.textContent = (language==='pt'?"Ver Script":"View Script");
+    card.appendChild(openBtn);
+
+    const copySlugBtn=document.createElement('button');
+    copySlugBtn.textContent = (language==='pt'?"Copiar Slug":"Copy Slug");
+    copySlugBtn.onclick=()=>navigator.clipboard.writeText(script.slug).then(()=>alert(`${texts[language].slugCopied} ${script.slug}`));
+    card.appendChild(copySlugBtn);
+
+    const copyCodeBtn=document.createElement('button');
+    copyCodeBtn.textContent = (language==='pt'?"Copiar Código":"Copy Code");
+    copyCodeBtn.onclick=async()=>{
+      try{
+        const res=await fetch(`https://scriptblox.com/api/script/${script.slug}`);
+        const data=await res.json();
+        const code=data.script?.code||"";
+        if(!code)throw new Error("Sem código disponível");
+        await navigator.clipboard.writeText(code);
+        alert(texts[language].codeCopied);
+      } catch(err){ alert(texts[language].codeError); console.error(err);}
+    };
+    card.appendChild(copyCodeBtn);
+
+    container.appendChild(card);
+  });
+}
+
+function filterScripts() {
+  const query=document.getElementById('filter-input').value.toLowerCase();
+  const filtered=allScripts.filter(script=>script.title.toLowerCase().includes(query));
+  displayScripts(filtered);
+}
+
+loadMyScripts();
+</script>
+
+</body>
+</html>
