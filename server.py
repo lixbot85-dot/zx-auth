@@ -1,9 +1,9 @@
 import os
-from flask import Flask, send_file, jsonify
+from flask import Flask, send_from_directory, jsonify
 
 app = Flask(__name__)
 
-# ===== BASE PATHS =====
+# ===== PATHS =====
 BASE_DIR = os.path.abspath("files")
 BASE_PATH = os.path.abspath(".")
 SCRIPTS_PATH = os.path.join(BASE_PATH, "scripts")
@@ -19,23 +19,24 @@ def home():
     })
 
 
-# ===== FILE EXPLORER (JSON) =====
+# ===== FILE EXPLORER (JSON + HTML SUPPORT) =====
 @app.route("/files/", defaults={"req_path": ""})
 @app.route("/files/<path:req_path>")
 def files(req_path):
     abs_path = os.path.join(BASE_DIR, req_path)
 
+    # segurança básica
     if not abs_path.startswith(BASE_DIR):
         return jsonify({"error": "acesso negado"}), 403
 
     if not os.path.exists(abs_path):
         return jsonify({"error": "404"}), 404
 
-    # arquivo
+    # 📁 se for arquivo → SERVE NORMAL (HTML, JS, etc)
     if os.path.isfile(abs_path):
-        return send_file(abs_path)
+        return send_from_directory(BASE_DIR, req_path)
 
-    # pasta → JSON
+    # 📂 se for pasta → JSON
     items = []
 
     for file in os.listdir(abs_path):
@@ -61,7 +62,7 @@ def zxlib():
     if not os.path.exists(path):
         return "ZXLIB não encontrado", 404
 
-    response = send_file(path, mimetype="text/plain")
+    response = send_from_directory(SCRIPTS_PATH, "lib.lua")
     response.headers["Cache-Control"] = "no-store"
     return response
 
@@ -74,7 +75,7 @@ def zxhub():
     if not os.path.exists(path):
         return "ZXHUB não encontrado", 404
 
-    response = send_file(path, mimetype="text/plain")
+    response = send_from_directory(SCRIPTS_PATH, "zxhub.lua")
     response.headers["Cache-Control"] = "no-store"
     return response
 
@@ -87,7 +88,7 @@ def musiclist():
     if not os.path.exists(path):
         return jsonify({"error": "arquivo não encontrado"}), 404
 
-    response = send_file(path, mimetype="application/json")
+    response = send_from_directory(LIBRARY_PATH, "songlist.json")
     response.headers["Cache-Control"] = "no-store"
     return response
 
