@@ -1,0 +1,1804 @@
+/* =========================================================
+   GLOBAL — HOME PAGE
+========================================================= */
+
+.home-body {
+    margin: 0;
+    padding: 0;
+    overflow: auto;     /* allows zoom + scroll */
+    touch-action: auto; /* required for pinch zoom on mobile */
+}
+
+/* Fullscreen background — original behavior */
+.bg-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-image: url("../assets/bg_home.jpg");
+    background-repeat: repeat-x;
+    background-size: auto 100vh;
+    background-position: top center;
+    z-index: 1;
+
+    pointer-events: none; /* 🔑 FIX — REQUIRED FOR iOS DRAGGING */
+}
+
+/* =========================================================
+   STATIC BACKGROUND GIFS — LOCKED
+========================================================= */
+
+.tetherball-gif {
+    position: absolute;
+    top: calc(100vh * 0.41);
+    left: 50%;
+    transform: translateX(calc(-50% + (100vh * -0.12)));
+    width: calc(100vh * 0.35);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.seesaw-gif {
+    position: absolute;
+    top: calc(100vh * 0.44);
+    left: 50%;
+    transform: translateX(calc(-50% + (100vh * 0.20)));
+    width: calc(100vh * 0.17);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.tickles-gif {
+    position: absolute;
+    top: calc(100vh * 0.60);
+    left: 50%;
+    transform: translateX(calc(-50% + (100vh * 0.13)));
+    width: calc(100vh * 0.20);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.playground-banner-gif {
+    position: absolute;
+    top: calc(100vh * 0.285);
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100vh * 0.24);
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* =========================================================
+   GEAR PUZZLE
+========================================================= */
+
+.gear-drop-zone {
+    position: absolute;
+    top: calc(100vh * 0.69);
+    left: 50%;
+    transform: translateX(-82%);
+    width: calc(100vh * 0.17);
+    height: calc(100vh * 0.18);
+    background: transparent;
+    pointer-events: none;
+    z-index: 3;
+}
+
+.gear {
+    position: absolute;
+    pointer-events: auto;
+    touch-action: none;
+    cursor: grab;
+    z-index: 6;
+}
+
+/* Starting positions */
+.gear-blue-start {
+    width: calc(100vh * 0.032);
+    top: calc(100vh * 0.61);
+    left: 50%;
+    transform: translateX(-50%); /* causes initial jump */
+}
+
+.gear-pink-start {
+    width: calc(100vh * 0.026);
+    top: calc(100vh * 0.153);
+    left: calc(50vw + 4.5vh);
+}
+
+.gear-red-start {
+    width: calc(100vh * 0.020);
+    top: calc(100vh * 0.51);
+    left: calc(50vw + 19vh);
+}
+
+.gear-yellow-start {
+    width: calc(100vh * 0.029);
+    top: calc(100vh * 0.853);
+    left: calc(50vw + 15vh);
+}
+
+/* Final snapped positions */
+.blue-final {
+    position: absolute;
+    top: calc(100vh * 0.714);
+    left: 50%;
+    transform: translateX(calc(50% + (100vh * -0.106)));
+    width: calc(100vh * 0.03);
+    pointer-events: none;
+    z-index: 5;
+}
+
+.pink-final {
+    position: absolute;
+    top: calc(100vh * 0.731);
+    left: 50%;
+    transform: translateX(calc(-50% + (100vh * -0.06)));
+    width: calc(100vh * 0.037);
+    pointer-events: none;
+    z-index: 5;
+}
+
+.red-final {
+    position: absolute;
+    top: calc(100vh * 0.757);
+    left: 50%;
+    transform: translateX(calc(-50% + (100vh * -0.0755)));
+    width: calc(100vh * 0.050);
+    pointer-events: none;
+    z-index: 5;
+}
+
+.yellow-final {
+    position: absolute;
+    top: calc(100vh * 0.785);
+    left: 50%;
+    transform: translateX(calc(-50% + (100vh * -0.04)));
+    width: calc(100vh * 0.065);
+    pointer-events: none;
+    z-index: 5;
+}
+
+/* =========================================================
+   HIDDEN UTILITY
+========================================================= */
+
+.hidden {
+    display: none !important;
+}
+
+/* =========================================================
+   PASSWORD BOX
+========================================================= */
+
+.password-box {
+    position: absolute;
+    top: calc(100vh * 0.878);
+    left: 50%;
+    transform: translateX(calc(-50% - (100vh * 0.057)));
+    z-index: 20;
+}
+
+.pw-window {
+    width: calc(100vh * 0.145);
+    background: #ffff33;
+    border: calc(100vh * 0.0025) solid #000;
+    padding: calc(100vh * 0.006);
+    font-family: "Courier New", monospace;
+    color: black;
+    box-shadow: calc(100vh * 0.003) calc(100vh * 0.003) 0 #000;
+    font-size: calc(100vh * 0.012);
+}
+
+.pw-row {
+    display: flex;
+    justify-content: center;
+    gap: calc(100vh * 0.003);
+}
+
+/* =========================
+   PASSWORD FIELD MOVE
+========================= */
+.password-input {
+    width: calc(100vh * 0.10);
+    padding: calc(100vh * 0.002);
+    border: calc(100vh * 0.0025) solid black;
+    background: #ffff33;
+    color: black;
+    font-family: "Courier New", monospace;
+    font-size: calc(100vh * 0.018);
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    appearance: none;
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
+
+    /* MOVE LEFT / RIGHT */
+    margin-left: calc(100vh * -0.001);   /* ← change this */
+    
+       /* 🔑 MOVE TEXT INSIDE FIELD */
+    padding-left: calc(100vh * 0.005);  /* ← text right */
+    text-indent: 0;        
+}
+
+/* =========================
+   OK BUTTON MOVE
+========================= */
+.password-btn {
+    width: calc(100vh * 0.035);
+    background: #ffff33;
+    border: calc(100vh * 0.0025) solid black;
+    font-family: "Courier New", monospace;
+    font-size: calc(100vh * 0.018);
+    cursor: pointer;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    appearance: none;
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
+
+    /* MOVE LEFT / RIGHT */
+    margin-left: calc(100vh * .005);   /* ← change this */
+    
+        /* 🔑 MOVE TEXT INSIDE BUTTON */
+    text-indent: calc(100vh *-0.002);   /* ← text right */
+}
+
+.password-btn:hover {
+    background: #fff066;
+}
+
+/* =========================================================
+   BOTTOM LINKS
+========================================================= */
+
+.bottom-links {
+    position: absolute;
+    bottom: calc(100vh * 0.04);
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: "Comic Sans MS", sans-serif;
+    font-size: calc(100vh * 0.025);
+    font-weight: bold;
+    color: #ff66ff;
+    display: flex;
+    gap: calc(100vh * 0.01);
+    z-index: 30;
+    white-space: nowrap;
+    flex-wrap: nowrap;
+}
+
+.bottom-links a,
+.bottom-links .divider {
+    color: #ff66ff;
+    font-size: calc(100vh * 0.025);
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.bottom-links a:hover {
+    color: #ffff33;
+}
+
+.bottom-links a:active {
+    color: #ffff33 !important;
+}
+/* =========================================================
+   AOL 2.5 STYLE CHAT WINDOW — SITE-NATIVE SCALING
+========================================================= */
+.aol-window {
+    /* optional manual tweak */
+    --aol-font-scale: 1;
+
+    position: fixed;
+
+    /* SIZE MATCHES SITE SYSTEM */
+    width: calc(100vh * 0.42);
+    height: calc(100vh * 0.30);
+
+    background: #c0c0c0;
+    border: calc(100vh * 0.0025) solid #000000;
+    box-shadow: calc(100vh * 0.003) calc(100vh * 0.003) 0 #000000;
+
+    display: flex;
+    flex-direction: column;
+    z-index: 9999999;
+
+    font-family: "MS Sans Serif", Tahoma, sans-serif;
+    font-size: calc(100vh * 0.014 * var(--aol-font-scale));
+
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
+}
+
+/* =========================================================
+   TITLE BAR
+========================================================= */
+.aol-titlebar {
+    position: relative;
+    height: calc(100vh * 0.03);
+    background: #008080;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    padding-left: calc(100vh * 0.008);
+    font-weight: bold;
+    font-size: calc(100vh * 0.018 * var(--aol-font-scale));
+    border-bottom: calc(100vh * 0.0015) solid #000000;
+}
+
+/* Drag zone */
+.drag-zone {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    cursor: move;
+    background: transparent;
+    z-index: 5;
+}
+
+/* =========================================================
+   CLOSE BOX
+========================================================= */
+.aol-x-graphic {
+    position: absolute;
+    right: calc(100vh * 0.005);
+    top: 50%;
+    transform: translateY(-50%);
+
+    width: calc(100vh * 0.03);
+    height: calc(100vh * 0.03);
+
+    background: #c0c0c0;
+    border: calc(100vh * 0.0015) solid #000000;
+    box-shadow: calc(100vh * 0.0015) calc(100vh * 0.0015) 0 #808080;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: calc(100vh * 0.018 * var(--aol-font-scale));
+    font-weight: bold;
+    color: #000000;
+
+    pointer-events: none;
+    z-index: 7;
+}
+
+/* Click hitbox */
+.aol-close-hitbox {
+    position: absolute;
+    right: calc(100vh * 0.005);
+    top: 50%;
+    transform: translateY(-50%);
+    width: calc(100vh * 0.03);
+    height: calc(100vh * 0.03);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 10;
+}
+
+/* =========================================================
+   CHAT AREA
+========================================================= */
+.aol-chat-area {
+    background: #ffffff;
+    margin: calc(100vh * 0.008);
+    margin-bottom: calc(100vh * 0.005);
+    padding: calc(100vh * 0.006);
+
+    height: calc(100vh * 0.12);
+    overflow-y: auto;
+
+    font-size: calc(100vh * 0.014 * var(--aol-font-scale));
+    line-height: calc(100vh * 0.02 * var(--aol-font-scale));
+
+    box-sizing: border-box;
+    border-width: calc(100vh * 0.002);
+    border-style: solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+}
+
+/* =========================================================
+   INPUT AREA
+========================================================= */
+.aol-input-wrap {
+    margin: 0 calc(100vh * 0.008);
+    height: calc(100vh * 0.08);
+    background: #ffffff;
+
+    box-sizing: border-box;
+    border-width: calc(100vh * 0.002);
+    border-style: solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+}
+
+.aol-input {
+    width: 100%;
+    height: 100%;
+    padding: calc(100vh * 0.004);
+    margin: 0;
+
+    border: none;
+    outline: none;
+    resize: none;
+    box-sizing: border-box;
+    background: #ffffff;
+
+    font-family: "MS Sans Serif", Tahoma, sans-serif;
+    font-size: calc(100vh * 0.014 * var(--aol-font-scale));
+}
+
+.aol-input:focus {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* =========================================================
+   SEND ROW
+========================================================= */
+.aol-bottom-row {
+    margin: calc(100vh * 0.008);
+    margin-top: calc(100vh * 0.005);
+    height: calc(100vh * 0.045);
+
+    background: #c0c0c0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    padding-right: calc(100vh * 0.008);
+
+    border-width: calc(100vh * 0.002);
+    border-style: solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+}
+
+/* SEND button */
+.aol-send-btn {
+    width: calc(100vh * 0.10);
+    height: calc(100vh * 0.03);
+
+    background: #c0c0c0;
+    font-size: calc(100vh * 0.014 * var(--aol-font-scale));
+    font-weight: bold;
+    cursor: pointer;
+
+    border-width: calc(100vh * 0.002);
+    border-style: solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+}
+
+.aol-send-btn:active {
+    border-color: #808080 #ffffff #ffffff #808080;
+}
+
+/* =========================================================
+   USERNAME COLORS
+========================================================= */
+.aol-blue {
+    font-weight: bold;
+    color: #000080;
+}
+
+.aol-red {
+    font-weight: bold;
+    color: #800000;
+}
+
+
+/* =========================================================
+   AOL CHAT — SLAVE CHAT TO TITLE BAR (FINAL)
+   Title bar is the single authority
+========================================================= */
+.aol-chat-area,
+.aol-input,
+.aol-send-btn {
+    font-size: inherit !important;
+    line-height: inherit !important;
+
+    -webkit-text-size-adjust: none !important;
+    text-size-adjust: none !important;
+}
+/* =========================================================
+   AOL CHAT — TEXT SIZE TUNERS (SAFE, INHERIT-BASED)
+   Title bar remains the master
+========================================================= */
+
+.aol-window {
+    /* 🔧 ADJUST THESE ONLY */
+    --chat-text-scale: 1;     /* chat conversation text */
+    --send-text-scale: 1;     /* Send button text */
+    --input-text-scale: 1;    /* text you TYPE */
+}
+
+/* =========================================================
+   CHAT CONVERSATION TEXT
+========================================================= */
+.aol-chat-area {
+    font-size: calc(2em * var(--chat-text-scale)) !important;
+    line-height: calc(1.4em * var(--chat-text-scale)) !important;
+}
+
+/* =========================================================
+   INPUT (TYPED TEXT)
+========================================================= */
+.aol-input {
+    font-size: calc(2em * var(--input-text-scale)) !important;
+    line-height: calc(1.4em * var(--input-text-scale)) !important;
+}
+
+/* =========================================================
+   SEND BUTTON TEXT
+========================================================= */
+.aol-send-btn {
+    font-size: calc(2em * var(--send-text-scale)) !important;
+}
+
+
+/* =========================================================
+   AOL CHAT — HARD LOCK MESSAGE GAP (NO ZOOM DRIFT)
+========================================================= */
+
+/* Kill all paragraph spacing completely */
+.aol-chat-area p {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Add a fixed, pixel-locked gap between messages */
+.aol-chat-area p + p {
+    margin-top: 4px !important; /* 🔒 does NOT scale */
+}
+
+/* =========================================================
+   AOL CHAT — TRUE USER GAP CONTROL (NO OVERLAP)
+========================================================= */
+
+.aol-chat-area {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Message blocks */
+.aol-chat-area p {
+    margin: 0 !important;
+    padding: 0 !important;
+
+    line-height: 1.2 !important; /* SAFE for wrapping */
+}
+
+/* 🔧 USER GAP CONTROL (this is the knob) */
+.aol-chat-area p + p {
+    margin-top: -3px !important; /* thinner gap between users */
+}
+
+
+
+
+/* =========================================================
+   VIRUS GLITCH EFFECTS
+========================================================= */
+
+/* Phase 1 */
+.glitch-phase-1 .bg-wrapper,
+.glitch-phase-1 .bg-wrapper img,
+.glitch-phase-1 .aol-window,
+.glitch-phase-1 .bottom-links,
+.glitch-phase-1 .password-box {
+    animation: glitchSoft 1.8s infinite;
+}
+
+/* Phase 2 */
+.glitch-phase-2 .bg-wrapper,
+.glitch-phase-2 .bg-wrapper img,
+.glitch-phase-2 .aol-window,
+.glitch-phase-2 .bottom-links,
+.glitch-phase-2 .password-box {
+    animation: glitchHeavy 1.1s infinite;
+    image-rendering: pixelated;
+}
+
+/* Tiny jitter */
+.glitch-phase-2 .aol-chat-area,
+.glitch-phase-2 .aol-input,
+.glitch-phase-2 .bottom-links,
+.glitch-phase-2 .password-box,
+.glitch-phase-2 .gear,
+.glitch-phase-2 .gear-drop-zone {
+    animation: tinyJitter 0.18s infinite steps(2, end);
+}
+
+/* Pixel smear */
+.glitch-phase-2 .virus-clone-gif {
+    animation: trailGlitch 0.35s infinite;
+    image-rendering: pixelated;
+}
+
+/* Flash */
+.glitch-flash .bg-wrapper,
+.glitch-flash .bg-wrapper img,
+.glitch-flash .aol-window {
+    filter: invert(100%) contrast(260%) !important;
+}
+
+/* Keyframes */
+@keyframes glitchSoft {
+    0%   { filter: none; transform: translate(0,0); }
+    15%  { filter: hue-rotate(10deg) contrast(1.15); }
+    30%  { transform: translate(-1px, 0); }
+    45%  { transform: translate(1px, -1px); }
+    60%  { filter: hue-rotate(-10deg) contrast(1.2); }
+    100% { filter: none; transform: translate(0,0); }
+}
+
+@keyframes glitchHeavy {
+    0%   { filter: hue-rotate(0deg) contrast(1.4); transform: translate(0,0) scale(1); }
+    10%  { filter: hue-rotate(40deg) contrast(1.9) saturate(1.6); transform: translate(-2px, 1px); }
+    25%  { filter: hue-rotate(-30deg) contrast(2.1) saturate(1.8); transform: translate(2px, -1px) skewX(0.5deg); }
+    40%  { filter: hue-rotate(180deg) contrast(2.5) saturate(2.3); transform: scale(1.02) skewX(1.2deg); }
+    55%  { filter: hue-rotate(210deg) contrast(2.1); transform: translate(-1px, 2px); }
+    70%  { filter: hue-rotate(-160deg) contrast(2.2) saturate(2.4); transform: translate(2px, 0); }
+    100% { filter: hue-rotate(0deg) contrast(1.4); transform: translate(0,0) scale(1); }
+}
+
+@keyframes tinyJitter {
+    0%   { transform: translate(0,0); }
+    50%  { transform: translate(1px, -1px); }
+    100% { transform: translate(0,0); }
+}
+
+@keyframes trailGlitch {
+    0%   { filter: hue-rotate(0deg) contrast(1.4); transform: translate(0,0); }
+    25%  { filter: hue-rotate(20deg) contrast(1.8); transform: translate(-2px,1px); }
+    50%  { filter: hue-rotate(-20deg) contrast(1.9); transform: translate(2px,-1px); }
+    75%  { filter: hue-rotate(10deg) contrast(2); }
+    100% { filter: hue-rotate(0deg) contrast(1.4); transform: translate(0,0); }
+}
+
+/* =========================================================
+   BLUE SCREEN OVERLAY
+========================================================= */
+
+#bluescreen {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: #000000;
+    z-index: 999999999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#bluescreen.hidden {
+    display: none !important;
+}
+
+.bluescreen-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* =========================================================
+   PERFECT FREEZE LAYER
+========================================================= */
+
+#totalFreeze {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    pointer-events: none;
+    z-index: 999999997;
+    opacity: 0;
+    transition: opacity 0.08s ease-out;
+    image-rendering: pixelated;
+    background: transparent;
+}
+
+#totalFreeze.active {
+    opacity: 1;
+}
+
+.frozen-gif-clone {
+    position: fixed !important;
+    pointer-events: none !important;
+    z-index: 999999998 !important;
+    image-rendering: pixelated !important;
+}
+
+/* =========================================================
+   VIRUS CLONE GIFS
+========================================================= */
+
+.virus-clone-gif {
+    position: absolute;
+    pointer-events: none;
+    image-rendering: pixelated;
+    z-index: 999998;
+}
+
+/* =========================================================
+   DARK VIRUS EFFECTS
+========================================================= */
+
+.glitch-invert * {
+    filter: invert(100%) hue-rotate(180deg) !important;
+}
+
+.glitch-void * {
+    filter: brightness(0) !important;
+}
+
+.glitch-blackout {
+    filter: brightness(0) !important;
+}
+
+.glitch-graymelt * {
+    filter: grayscale(100%) contrast(200%) !important;
+}
+
+/* =========================================================
+   JUMPSCARE OVERLAY
+========================================================= */
+
+#plushyFaceJump {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: #000000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000000000000;
+}
+
+#plushyFaceJump.hidden {
+    display: none !important;
+}
+
+.plushy-face-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* =========================================================
+   IMPROVED CHAT SPACING
+========================================================= */
+
+.aol-chat-area {
+    padding-top: 2px;
+    padding-bottom: 10px;
+    height: 100px;
+}
+
+.aol-chat-area p {
+    margin: 2px 0;
+    line-height: 13px;
+}
+
+.aol-blue {
+    font-weight: bold;
+    color: #0066ff;
+}
+
+.aol-red {
+    font-weight: bold;
+    color: #ff0000;
+}
+
+/* =========================================================
+   PREVENT BOTTOM LINKS WRAPPING
+========================================================= */
+
+.bottom-links,
+.bottom-links a,
+.bottom-links .divider {
+    white-space: nowrap;
+}
+
+/* =========================================================
+   VERTICAL PHONE OPTIMIZATION — PORTRAIT
+========================================================= */
+
+@media screen and (max-width: 600px) and (orientation: portrait) {
+
+    .bg-wrapper {
+        background-image: url("../assets/homephone_bg.jpg") !important;
+        background-size: cover;
+        background-position: center top;
+        background-repeat: no-repeat;
+    }
+
+    .tetherball-gif {
+        width: calc(100vh * 0.33);
+        top: calc(100vh * 0.41);
+        transform: translateX(calc(-50% + (100vh * -0.11)));
+    }
+
+    .seesaw-gif {
+        width: calc(100vh * 0.15);
+        top: calc(100vh * 0.45);
+        transform: translateX(calc(-50% + (100vh * 0.18)));
+    }
+
+    .tickles-gif {
+        width: calc(100vh * 0.18);
+        top: calc(100vh * 0.63);
+        transform: translateX(calc(-50% + (100vh * 0.14)));
+    }
+
+    .playground-banner-gif {
+        width: calc(100vh * 0.22);
+        top: calc(100vh * 0.29);
+    }
+
+    .gear {
+        touch-action: none;
+    }
+
+    .gear-drop-zone {
+        top: calc(100vh * 0.67);
+    }
+
+    .bottom-links {
+        font-size: calc(100vh * 0.030);
+        bottom: calc(100vh * 0.02);
+    }
+
+    .bottom-links a,
+    .bottom-links .divider {
+        font-size: calc(100vh * 0.021);
+    }
+}
+
+/* =========================================================
+   PASSWORD BOX SCALE — PORTRAIT
+========================================================= */
+
+@media screen and (max-width: 600px) and (orientation: portrait) {
+
+    .password-box {
+        top: calc(100vh * 0.88);
+        transform: translateX(calc(-50% - (100vh * 0.053))) scale(1.30);
+        transform-origin: center top;
+    }
+
+    .password-btn {
+        text-indent: calc(-100vh * 0.005);
+    }
+}
+
+/* =========================================================
+   MOBILE GEAR START POSITIONS — PORTRAIT
+========================================================= */
+
+@media screen and (max-width: 600px) and (orientation: portrait) {
+
+    .gear-blue-start {
+        width: calc(100vh * 0.037);
+        top: calc(100vh * 0.608);
+        left: calc(50vw - 1.5vh);
+        transform: none !important;
+    }
+
+    .gear-pink-start {
+        width: calc(100vh * 0.029);
+        top: calc(100vh * 0.155);
+        left: calc(50vw + 4.5vh);
+    }
+
+    .gear-red-start {
+        width: calc(100vh * 0.030);
+        top: calc(100vh * 0.51);
+        left: calc(50vw + 16.5vh);
+    }
+
+    .gear-yellow-start {
+        width: calc(100vh * 0.031);
+        top: calc(100vh * 0.853);
+        left: calc(50vw + 15.5vh);
+    }
+}
+
+/* =========================================================
+   MOBILE FINAL GEAR POSITIONS — PORTRAIT
+========================================================= */
+
+@media screen and (max-width: 600px) and (orientation: portrait) {
+
+    .blue-final {
+        top: calc(100vh * 0.706 + 1vh);
+        width: calc(100vh * 0.028);
+        transform: translateX(calc(50% + (100vh * -0.119) + 2vh));
+    }
+
+    .pink-final {
+        top: calc(100vh * 0.724 + 1vh);
+        width: calc(100vh * 0.033);
+        transform: translateX(calc(-50% + (100vh * -0.075) + 2vh));
+    }
+
+    .red-final {
+        top: calc(100vh * 0.748 + 1vh);
+        width: calc(100vh * 0.050);
+        transform: translateX(calc(-50% + (100vh * -0.09) + 2vh));
+    }
+
+    .yellow-final {
+        top: calc(100vh * 0.777 + 1vh);
+        width: calc(100vh * 0.065);
+        transform: translateX(calc(-50% + (100vh * -0.055) + 2vh));
+    }
+}
+
+/* =========================================================
+   AOL WINDOW — PORTRAIT MOBILE
+========================================================= */
+
+@media screen and (max-width: 600px) and (orientation: portrait) {
+
+    .aol-window {
+        position: fixed !important;
+        width: calc(100vh * 0.40);
+        height: calc(100vh * 0.32);
+        transform: none !important;
+        transform-origin: center center !important;
+    }
+}
+
+/* =========================================================
+   AOL FAKE INPUT
+========================================================= */
+
+.aol-fake-input {
+    width: 100%;
+    height: 100%;
+    padding: 4px;
+    background: #ffffff;
+    color: #000000;
+    font-family: "MS Sans Serif", Tahoma, sans-serif;
+    font-size: 11px;
+    line-height: 13px;
+    border: none;
+    outline: none;
+    overflow-y: auto;
+    box-sizing: border-box;
+    user-select: none;
+}
+
+/* =========================================================
+   AOL KEYBOARD — MATCH PASSWORD KEYBOARD EXACTLY
+========================================================= */
+
+:root {
+    --aol-scale: 0.80;        /* shrink keyboard (match PW keyboard) */
+    --aol-pos-y: 0vh;         /* vertical adjustment offset */
+    --aol-esc-width: 3vw;     /* ESC width match */
+}
+
+/* OUTER LAYER — controls position ONLY */
+#aolKeyboard {
+    position: fixed;
+    left: 50%;
+    bottom: calc(10vh + var(--aol-pos-y));
+    transform: translateX(-50%);
+    z-index: 9999999;
+    display: none !important;
+}
+
+/* Visible when JS adds .show */
+#aolKeyboard.show {
+    display: block !important;
+}
+
+/* INNER WRAPPER — controls size + rounded borders (just like PW keyboard) */
+.aol-keyboard {
+    transform: scale(var(--aol-scale));
+    transform-origin: top center;
+
+    background: #c0c0c0;
+    border: 2px solid #808080;
+    border-top: 3px solid #ffffff;
+    border-left: 3px solid #ffffff;
+
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    box-sizing: border-box;
+    border-radius: 12px;
+}
+
+/* ROWS */
+.aol-key-row {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+}
+
+/* BASE KEYS — identical to password keyboard */
+.aol-key {
+    width: 8vw;
+    height: 8vw;
+    min-width: 32px;
+    min-height: 32px;
+
+    background: #d0d0d0;
+    font-size: 0.75rem; /* same as PW keyboard normal keys */
+
+    border: 2px solid #808080;
+    border-top: 3px solid #ffffff;
+    border-left: 3px solid #ffffff;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    cursor: pointer;
+    user-select: none;
+    border-radius: 8px;
+}
+
+/* ESC / BACK / ENTER — smaller text (match PW keyboard behavior) */
+.aol-key[data-key="ESC"],
+.aol-key[data-key="BACK"],
+.aol-key[data-key="ENTER"] {
+    font-size: 0.5rem !important;
+}
+
+/* ENTER — wider */
+.aol-key[data-key="ENTER"] {
+    width: 20vw;
+    height: 8vw;
+    min-width: 70px;
+}
+
+/* BACKSPACE — wide */
+.aol-key-back,
+.aol-key[data-key="BACK"] {
+    width: 14vw;
+}
+
+/* SPACE BAR — same as PW keyboard */
+.aol-key-space {
+    width: 60vw;
+    height: 10vw;
+    font-size: 0;
+    border-radius: 12px;
+}
+
+/* PRESS ANIMATION */
+.aol-key:active {
+    background: #b0b0b0;
+    border-top: 2px solid #808080;
+    border-left: 2px solid #808080;
+    border-bottom: 3px solid #ffffff;
+    border-right: 3px solid #ffffff;
+}
+
+
+/* =========================================================
+   HIDE AOL KEYBOARD IN LANDSCAPE — SAME AS PASSWORD KB
+========================================================= */
+
+@media screen and (max-width: 900px) and (orientation: landscape) {
+    #aolKeyboard {
+        display: none !important;
+    }
+}
+
+/* =========================================================
+   MOBILE BSOD — PORTRAIT
+========================================================= */
+
+@media screen and (max-width: 600px) and (orientation: portrait) {
+    #bluescreen .bluescreen-img {
+        content: url("../assets/bsod2.jpg");
+    }
+}
+
+/* =========================================================
+   MOBILE BSOD — LANDSCAPE
+========================================================= */
+
+@media screen and (max-width: 600px) and (orientation: landscape) {
+    #bluescreen .bluescreen-img {
+        content: url("../assets/bsod1.jpg") !important;
+    }
+}
+
+
+/* =========================================================
+   MOBILE LANDSCAPE — HIDE IM LINK ONLY
+========================================================= */
+
+@media screen and (max-height: 500px) and (hover: none) and (pointer: coarse) {
+
+    #imLink {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+    }
+
+    #dividerAfterIM {
+        display: none !important;
+    }
+
+    #dividerBeforeIM {
+        display: inline !important;
+    }
+}
+
+/* =========================================================
+   DESKTOP — 50% BIGGER AOL CHAT WINDOW
+========================================================= */
+@media (min-width: 600px) {
+
+    :root {
+        --x-box-size: calc(100vh * 0.03);
+        --x-text-size: calc(100vh * 0.02);
+    }
+
+    .aol-window {
+        position: fixed;
+        width: calc(100vh * 0.42 * 1.5);
+        height: calc(100vh * 0.30 * 1.5);
+        transform-origin: center center;
+        z-index: 9999999;
+    }
+
+    .aol-titlebar {
+        height: calc(100vh * 0.03 * 1.5);
+        font-size: calc(100vh * 0.018 * 1.5);
+        position: relative;
+    }
+
+    .aol-x-graphic {
+        width: var(--x-box-size);
+        height: var(--x-box-size);
+        right: calc(100vh * 0.005);
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: var(--x-text-size);
+        font-weight: bold;
+        line-height: 1;
+        background: #c0c0c0;
+        border: 1px solid #000;
+        box-shadow: 1px 1px 0 #808080;
+        pointer-events: none;
+    }
+
+    .aol-close-hitbox {
+        width: var(--x-box-size);
+        height: var(--x-box-size);
+        right: calc(100vh * 0.005);
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .aol-chat-area {
+        height: calc(100vh * 0.12 * 1.5);
+        font-size: 14px;
+        line-height: 20px;
+        padding: 4px;
+    }
+
+    .aol-chat-area p {
+        margin: 8px 0 !important;
+    }
+
+    .aol-input-wrap {
+        height: calc(100vh * 0.08 * 1.5);
+    }
+
+    .aol-input {
+        font-size: 14px;
+        line-height: 20px;
+    }
+
+    .aol-bottom-row {
+        height: calc(100vh * 0.045 * 1.5);
+    }
+
+    .aol-send-btn {
+        width: calc(100vh * 0.10 * 1.5);
+        height: calc(100vh * 0.03 * 1.5);
+        font-size: 14px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        line-height: 1 !important;
+        padding: 0 !important;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+}
+
+/* =========================================================
+   PORTRAIT MOBILE — SCALE AOL CHAT
+========================================================= */
+@media (max-width: 600px) and (orientation: portrait) {
+    .aol-window {
+        left: 50% !important;
+        top: 42.5% !important;
+        transform: translate(-50%, -50%) scale(1.33) !important;
+        transform-origin: center center !important;
+        z-index: 9999999;
+    }
+}
+
+/* =========================================================
+   PASSWORD KEYBOARD — STABLE SCALE SYSTEM
+========================================================= */
+:root {
+    --pw-scale: 0.8;
+    --pw-pos-y: 0vh;
+    --pw-esc-width: 3vw;
+
+    --aol-keyboard-scale: 0.83;
+    --aol-keyboard-offset-y: 0vh;
+}
+
+/* ESC / BACK / ENTER */
+.pw-key[data-key="ESC"],
+.pw-key[data-key="BACK"],
+.pw-key[data-key="ENTER"] {
+    font-size: 0.5rem !important;
+    font-weight: normal;
+}
+
+.pw-key[data-key="ESC"] {
+    width: var(--pw-esc-width) !important;
+    border-radius: 8px;
+}
+
+/* PASSWORD KEYBOARD — PORTRAIT ONLY */
+@media (max-width: 600px) and (orientation: portrait) {
+
+    .pw-keyboard {
+        position: fixed;
+        left: 50%;
+        top: calc(60vh + var(--pw-pos-y));
+        transform: translateX(-50%);
+        z-index: 9999999;
+        display: none !important;
+    }
+
+    .pw-keyboard.show {
+        display: block !important;
+    }
+
+    .pw-wrap {
+        transform: scale(var(--pw-scale));
+        transform-origin: top center;
+        background: #c0c0c0;
+        border: 2px solid #808080;
+        border-top: 3px solid #ffffff;
+        border-left: 3px solid #ffffff;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        border-radius: 12px;
+    }
+
+    .pw-key {
+        width: 8vw;
+        height: 8vw;
+        min-width: 32px;
+        min-height: 32px;
+        font-size: 0.75rem;
+        background: #d0d0d0;
+        border: 2px solid #808080;
+        border-top: 3px solid #ffffff;
+        border-left: 3px solid #ffffff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 8px;
+    }
+
+    .pw-key[data-key="BACK"] { width: 14vw; }
+    .pw-key[data-key="ENTER"] { width: 20vw; min-width: 70px; }
+    .pw-space { width: 60vw; height: 10vw; font-size: 0; }
+}
+
+/* =========================================================
+   AOL KEYBOARD — SCALE + POSITION
+========================================================= */
+#aolKeyboard {
+    position: fixed;
+    left: 50%;
+    bottom: calc(1vh + var(--aol-keyboard-offset-y));
+    transform: translateX(-50%) scale(var(--aol-keyboard-scale));
+    transform-origin: top center;
+    z-index: 9999999;
+    display: none;
+}
+
+#aolKeyboard.show {
+    display: flex !important;
+}
+
+/* =========================================================
+   MOBILE UX TWEAKS
+========================================================= */
+@media (max-width: 600px) and (orientation: portrait) {
+    .password-btn { display: none !important; }
+    .password-input { width: 17vw; }
+}
+
+
+
+/* =========================================================
+   PLUSHY + TEXT (VISUAL ONLY)
+========================================================= */
+
+.plushy-gif {
+    position: absolute;
+    top: 29%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(100vh * 0.42);
+    max-width: 90vw;
+    image-rendering: pixelated;
+    pointer-events: none;
+}
+
+.splash-text {
+    position: absolute;
+    top: calc(100vh * 0.57);
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100vh * 0.50);
+    max-width: 85vw;
+    image-rendering: pixelated;
+    pointer-events: none;
+}
+
+/* =========================================================
+   STUFFIES — ONLY INTERACTIVE ELEMENTS
+========================================================= */
+
+.stuffy-wrap {
+    position: absolute;
+
+    /* SIZE CONTROL */
+    width: calc(100vh * 0.12);
+    height: auto;                 /* no forced square */
+
+    cursor: grab;
+    touch-action: none;
+    pointer-events: auto;
+    z-index: 20;
+
+    /* Smooth scale for hover / drag */
+    transition: transform 0.15s ease;
+}
+
+.stuffy-wrap:active {
+    cursor: grabbing;
+}
+
+/* Image never captures pointer */
+.stuffy-img {
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   INDIVIDUAL STUFFY POSITIONS + SIZES
+========================================================= */
+
+#wrap1 {
+    left: 25%;
+    top: 65%;
+    width: calc(100vh * 0.08);
+}
+
+#wrap2 {
+    left: 35%;
+    top: 75%;
+    width: calc(100vh * 0.12);
+}
+
+#wrap3 {
+    left: 46%;
+    top: 70%;
+    width: calc(100vh * 0.13);
+}
+
+#wrap4 {
+    left: 60%;
+    top: 75%;
+    width: calc(100vh * 0.10);
+}
+
+#wrap5 {
+    left: 70%;
+    top: 65%;
+    width: calc(100vh * 0.11);
+}
+
+
+/* =========================================================
+   DROP ZONE — COLLISION ONLY
+========================================================= */
+
+#dropZone {
+    position: absolute;
+    left: 50%;
+    top:40%;
+    transform: translate(-50%, -50%);
+    width: calc(100vh * 0.10);
+    height: calc(100vh * 0.20);
+
+
+    /* Must NEVER block dragging */
+    pointer-events: none;
+}
+
+/* =========================================================
+   MOBILE TWEAKS
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .plushy-gif {
+        width: 80vw;
+    }
+
+    .splash-text {
+        width: 90vw;
+        top: 10vh;
+    }
+
+    .stuffy-wrap {
+        width: 16vw;
+        height: 16vw;
+    }
+
+    #dropZone {
+        width: 60vw;
+        height: 60vw;
+    }
+}
+
+/* Make text start at the top of the chat area */
+.aol-chat-area {
+    padding-top: 7px !important;
+}
+
+/* No extra gap before the first message */
+.aol-chat-area > *:first-child {
+    margin-top: 0 !important;
+}
+#fakeSplash {
+    position: fixed;
+
+    /* explicit edges — reliable */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    z-index: 5;              /* 🔑 LOWER than stuffies */
+    pointer-events: none;   /* visual only */
+
+    display: flex;
+    opacity: 1;
+
+    background: hotpink;
+
+    /* prevent visual glitches */
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   BULLETPROOF SPLASH SCALING (MOBILE SAFARI / FIREFOX SAFE)
+   Paste at very bottom of CSS
+========================================================= */
+
+/* Use the *stable* viewport height on mobile (svh), fallback to vh */
+:root { --SVH: 1vh; }
+@supports (height: 100svh) { :root { --SVH: 1svh; } }
+@supports (height: 100dvh) { :root { --SVH: 1svh; } } /* keep stable, not dynamic */
+
+/* Ensure splash itself uses stable viewport sizing */
+#fakeSplash {
+  height: calc(var(--SVH) * 100) !important;
+  width: 100vw !important;
+  overflow: hidden !important;
+
+  /* 🔒 FIX: allow stuffies to receive input + block audio unlock */
+  pointer-events: none !important;
+}
+
+/* Stop “blow up” by clamping splash visuals to BOTH height + width */
+.plushy-gif {
+  width: clamp(140px, calc(var(--SVH) * 42), 90vw) !important;
+  height: auto !important;
+  max-width: 90vw !important;
+}
+
+.splash-text {
+  width: clamp(180px, calc(var(--SVH) * 50), 85vw) !important;
+  height: auto !important;
+  max-width: 85vw !important;
+}
+
+/* Fix stuffy squeeze: never force a square, always preserve aspect */
+.stuffy-img {
+  width: 100% !important;
+  height: auto !important;
+  object-fit: contain !important;
+}
+
+/* Make stuffy wrappers scale down cleanly (no sudden giant jump) */
+.stuffy-wrap {
+  width: clamp(44px, calc(var(--SVH) * 12), 16vw) !important;
+  height: auto !important; /* overrides any mobile rule that forces 16vw height */
+}
+
+/* If you set individual widths on wrap1..wrap5, clamp them too */
+#wrap1 { width: clamp(34px, calc(var(--SVH) * 8), 14vw) !important; }
+#wrap2 { width: clamp(44px, calc(var(--SVH) * 12), 16vw) !important; }
+#wrap3 { width: clamp(48px, calc(var(--SVH) * 13), 17vw) !important; }
+#wrap4 { width: clamp(40px, calc(var(--SVH) * 10), 15vw) !important; }
+#wrap5 { width: clamp(42px, calc(var(--SVH) * 11), 16vw) !important; }
+
+/* Drop zone should scale the same way (optional but helps consistency) */
+#dropZone {
+  width: clamp(120px, calc(var(--SVH) * 20), 60vw) !important;
+  height: clamp(120px, calc(var(--SVH) * 20), 60vw) !important;
+}
+
+/* =========================================================
+   SPLASH TEXT — LOCK VERTICAL POSITION (NO JUMP)
+========================================================= */
+
+.splash-text {
+  top: 61% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}
+
+/* Splash should NEVER steal pointer events */
+#fakeSplash,
+.splash-wrapper {
+  pointer-events: none !important;
+  
+  
+}
+
+/* =========================================================
+   FADE SYSTEM — FINAL OVERRIDE (MUST BE LAST)
+========================================================= */
+
+#fakeSplash,
+.stuffy-wrap {
+    transition: opacity 0.5s ease !important;
+}
+
+#fakeSplash.fade-out,
+.stuffy-wrap.fade-out {
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* =========================================================
+   INTERACTIVE UI — HARD ENABLE (FINAL)
+========================================================= */
+
+/* Password box must always work */
+.password-box,
+.password-box * {
+    pointer-events: auto !important;
+}
+
+.password-box {
+    position: fixed !important;
+    z-index: 1000000000000 !important;
+}
+
+/* Bottom links must always work */
+.bottom-links,
+.bottom-links * {
+    pointer-events: auto !important;
+}
+
+.bottom-links {
+    position: fixed !important;
+    z-index: 1000000000001 !important;
+}
+
+/* =========================================================
+   VISUAL-ONLY GLITCH LAYERS — NEVER BLOCK INPUT
+========================================================= */
+
+.bg-wrapper,
+#fakeSplash,
+.splash-wrapper,
+#totalFreeze,
+.virus-clone-gif,
+.glitch-flash,
+.glitch-invert,
+.glitch-void,
+.glitch-graymelt {
+    pointer-events: none !important;
+
+}
+
+/* =========================================================
+   AOL CHAT — INTERACTION FIX (FINAL)
+========================================================= */
+
+/* Chat container itself stays transparent to clicks */
+.aol-window {
+    pointer-events: none;
+}
+
+/* Re-enable ONLY real interactive parts */
+.aol-window .drag-zone,
+.aol-window .aol-close-hitbox,
+.aol-window .aol-input,
+.aol-window .aol-send-btn {
+    pointer-events: auto !important;
+}
+
+/* Chat text area should scroll but not block page clicks */
+.aol-window .aol-chat-area {
+    pointer-events: auto;
+}
+
+/* =========================================================
+   STUFFIES — SAME ZOOM AS VIDEO LINKS
+   (CLEAN, SIMPLE, NO POP)
+========================================================= */
+
+/* Base state */
+.stuffy-wrap {
+    transform-origin: center center;
+    transition: transform 0.20s ease; /* 🔑 SAME AS .top-video-btn */
+}
+
+/* Hover = zoom */
+.stuffy-wrap:hover {
+    transform: scale(1.10);
+}
+
+/* Active (click / touch) = same zoom */
+.stuffy-wrap:active {
+    transform: scale(1.10);
+}
+
+/* ============================================================
+   🔧 MANUAL POSITION CONTROLS (EDIT THESE)
+   - increase LEFT %  → moves RIGHT
+   - decrease LEFT %  → moves LEFT
+   - increase TOP %   → moves DOWN
+   - decrease TOP %   → moves UP
+============================================================ */
+:root {
+    --hint-left: 55%;
+    --hint-top: 90%;
+}
+
+/* Wrap sits near bottom area */
+.pw-hint-wrap {
+    position: fixed;
+    left: var(--hint-left);
+    top: var(--hint-top);
+    transform: translate(-50%, -50%);
+    z-index: 99999999 !important;
+}
+
+.pw-hint-wrap.show-left {
+    transform: translate(-50%, -50%);
+}
+
+/* SMALLER hint button */
+.pw-hint-btn {
+    background: yellow;
+    color: black;
+    border: calc(100vh * 0.0016) solid #000;
+    font-family: "Comic Sans MS","Comic Sans","Chalkboard SE","Marker Felt",sans-serif;
+
+    /* 🔻 smaller */
+    font-size: calc(100vh * 0.014);
+
+    /* 🔻 smaller */
+    padding: calc(100vh * 0.003) calc(100vh * 0.0045);
+
+    cursor: pointer;
+    line-height: 1;
+}
+
+/* SMALLER caption popup ABOVE the hint */
+.pw-hint-popup {
+    position: absolute;
+    left: 0;
+    bottom: calc(100vh * 0.027);
+    top: auto;
+
+    background: yellow;
+    color: black;
+    border: calc(100vh * 0.0016) solid #000;
+
+    /* 🔻 smaller */
+    padding: calc(100vh * 0.0035) calc(100vh * 0.005);
+
+    font-family: "Comic Sans MS","Comic Sans","Chalkboard SE","Marker Felt",sans-serif;
+
+    /* 🔻 smaller */
+    font-size: calc(100vh * 0.014);
+
+    white-space: nowrap;
+}
+
+/* SMALLER X */
+.pw-hint-x {
+    position: absolute;
+    right: calc(100vh * 0.003);
+    top: calc(100vh * 0.003);
+
+    background: yellow;
+    color: black;
+    border: calc(100vh * 0.0012) solid #000;
+
+    /* 🔻 smaller */
+    width: calc(100vh * 0.016);
+    height: calc(100vh * 0.016);
+
+    cursor: pointer;
+    line-height: 1;
+    font-weight: bold;
+    font-family: inherit;
+    padding: 0;
+
+    /* 🔻 smaller */
+    font-size: calc(100vh * 0.012);
+}
+
+/* One-line caption spacing */
+.pw-hint-text {
+    /* 🔻 smaller */
+    padding-right: calc(100vh * 0.020);
+    white-space: nowrap;
+}
+
+/* Visibility helpers */
+.pw-hint-wrap.hidden,
+.pw-hint-popup.hidden {
+    display: none;
+}
+
+/* FORCE CLICKABILITY */
+.pw-hint-wrap,
+.pw-hint-wrap * {
+    pointer-events: auto !important;
+}
+
+
+
