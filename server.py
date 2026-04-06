@@ -7,18 +7,21 @@ app = Flask(__name__)
 BASE_DIR = os.path.abspath("files")
 BASE_PATH = os.path.abspath(".")
 SCRIPTS_PATH = os.path.join(BASE_PATH, "scripts")
+SCR_PATH = os.path.join(BASE_PATH, "templates")
 LIBRARY_PATH = os.path.join(BASE_PATH, "library")
 
 
 # ===== HOME =====
 @app.route("/")
 def home():
-    # Abre o HTML completo que você salvou em templates/index.html
-    try:
-        with open("templates/index.html", "r", encoding="utf-8") as f:
-            return Response(f.read(), mimetype="text/html")
-    except Exception as e:
-        return Response(f"<h1>Erro ao carregar HTML: {e}</h1>", mimetype="text/html")
+    pathv = os.path.join(SCR_PATH, "home.html")
+
+    if not os.path.exists(pathv):
+        return "html não encontrado", 404
+
+    response = send_from_directory(SCRIPTS_PATH, "home.html")
+    response.headers["Cache-Control"] = "no-store"
+    return response
 
 # ===== FILE EXPLORER (JSON + HTML SUPPORT) =====
 @app.route("/files/", defaults={"req_path": ""})
