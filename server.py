@@ -25,6 +25,16 @@ def home():
 
     return Response(html, mimetype="text/html")
 
+# ===== debug =====
+@app.route("/debug")
+def debug():
+    path = os.path.join(BASE_DIR, "templates")
+    
+    if not os.path.exists(path):
+        return f"PASTA NÃO EXISTE: {path}"
+    
+    return str(os.listdir(path))
+
 # ===== FILE EXPLORER (JSON + HTML SUPPORT) =====
 @app.route("/files/", defaults={"req_path": ""})
 @app.route("/files/<path:req_path>")
