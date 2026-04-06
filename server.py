@@ -14,7 +14,7 @@ LIBRARY_PATH = os.path.join(BASE_PATH, "library")
 # ===== HOME =====
 @app.route("/")
 def home():
-    return render_template("home.html")
+    return render_template("index.html")
 
 # ===== FILE EXPLORER (JSON + HTML SUPPORT) =====
 @app.route("/files/", defaults={"req_path": ""})
