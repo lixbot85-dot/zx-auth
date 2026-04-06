@@ -4,7 +4,8 @@ from flask import Flask, send_from_directory, jsonify
 app = Flask(__name__)
 
 # ===== PATHS =====
-BASE_DIR = os.path.abspath("files")
+# ===== BASE_DIR = os.path.abspath("files")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 BASE_PATH = os.path.abspath(".")
 SCRIPTS_PATH = os.path.join(BASE_PATH, "scripts")
 SCR_PATH = os.path.join(BASE_PATH, "templates")
