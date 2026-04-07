@@ -1,5 +1,5 @@
 from flask import Flask, send_from_directory, jsonify, Response, abort
-import os
+import os, json
 
 app = Flask(__name__)
 
@@ -27,19 +27,18 @@ def home():
 @app.route("/zx-store")
 @app.route("/zx-store/app")
 def zx_store():
-    # Carrega JSON
-    if not os.path.exists(JSON_FILE):
+    json_path = os.path.join(BASE_DIR, "servermanager", "applist.json")
+    if not os.path.exists(json_path):
         return "<h1>JSON de apps não encontrado</h1>", 404
 
     try:
-        with open(JSON_FILE, "r", encoding="utf-8") as f:
+        with open(json_path, "r", encoding="utf-8") as f:
             data = json.load(f)
     except Exception as e:
         return f"<h1>Erro ao ler JSON:</h1><p>{e}</p>", 500
 
     apps = data.get("apps", [])
 
-    # Cria HTML diretamente
     html = """
     <!DOCTYPE html>
     <html lang="pt-BR">
@@ -47,14 +46,13 @@ def zx_store():
     <meta charset="UTF-8">
     <title>ZX Store</title>
     <style>
-      body { font-family: sans-serif; background:#0e0e0e; color:#fff; padding:20px; }
+      body { font-family:sans-serif; background:#0e0e0e; color:#fff; padding:20px; }
       h1 { text-align:center; color:#4fc3f7; }
       .app-card { background:#1b1b1b; padding:15px; margin:10px 0; border-radius:10px; }
-      .app-card a { color:#4fc3f7; display:block; margin:5px 0; text-decoration:none; }
+      .app-card a { color:#4fc3f7; text-decoration:none; display:block; margin:5px 0; }
       .app-card a:hover { text-decoration:underline; }
     </style>
-    </head>
-    <body>
+    </head><body>
     <h1>ZX Store</h1>
     """
 
@@ -62,15 +60,15 @@ def zx_store():
         html += "<p>Nenhum app encontrado.</p>"
     else:
         for app in apps:
-            html += f'<div class="app-card">'
-            html += f'<strong>{app.get("Name","Sem Nome")}</strong> - {app.get("Data","")}<br>'
+            html += '<div class="app-card">'
+            html += f'<strong>{app.get("Name","Sem Nome")}</strong> — {app.get("Data","")}<br>'
             desc = app.get("Desc")
             if desc:
                 html += f'<em>{desc}</em><br>'
-            links = app.get("Links", [])
-            for link in links:
-                html += f'<a href="{link}" target="_blank">Baixar</a>'
-            html += '</div>'
+            for link in app.get("Links", []):
+                # cada link aparece como texto clicável
+                html += f'<a href="{link}" target="_blank">{link}</a>'
+            html += "</div>"
 
     html += "</body></html>"
 
