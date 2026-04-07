@@ -11,6 +11,7 @@ SCRIPTS_PATH = os.path.join(BASE_PATH, "scripts")
 SCR_PATH = os.path.join(BASE_PATH, "templates")
 LIBRARY_PATH = os.path.join(BASE_PATH, "library")
 BASE_API = "files/APIs"
+JSONLOADER_FILE = os.path.join(BASE_API, "jsonloader.lua")
 
 # ===== HOME =====
 @app.route("/")
@@ -25,17 +26,13 @@ def home():
 
     return Response(html, mimetype="text/html")
 
-# ===== API =====
-@app.route("/api/scripts")
-def list_scripts():
-    try:
-        scripts = [
-            name for name in os.listdir(BASE_API)
-            if os.path.isdir(os.path.join(BASE_API, name))
-        ]
-        return jsonify({"scripts": scripts})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+# ===== APIs =====
+@app.route("/api/jsonloader")
+def api_jsonloader():
+    if os.path.isfile(JSONLOADER_FILE):
+        return send_file(JSONLOADER_FILE)
+    else:
+        abort(404, description="jsonloader.lua não encontrado")
 
 # ===== debug =====
 @app.route("/debug")
