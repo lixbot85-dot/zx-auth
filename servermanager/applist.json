@@ -1,0 +1,24 @@
+{
+  "apps": [
+    {
+      "Name": "APP",
+      "Data": "01/01/25",
+      "Desc": "ok",
+      "Links": [
+        "https://mega.nz/13123123",
+        "https://mediafire.com/312312",
+        "https://drive.google.com/555gsdfsdr",
+        "https://zx-auth.onrender.com/files/apk/fr.apk"
+      ]
+    },
+    {
+      "Name": "Outro App",
+      "Data": "05/03/26",
+      "Desc": "Descrição opcional",
+      "Links": [
+        "https://mega.nz/abc123",
+        "https://mediafire.com/xyz456"
+      ]
+    }
+  ]
+}
