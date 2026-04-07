@@ -48,6 +48,7 @@
     cursor:pointer; 
     font-weight:bold; 
   }
+  .error { text-align:center; color:red; margin-top:50px; }
 </style>
 </head>
 <body>
@@ -65,34 +66,54 @@
   <div class="back-btn" onclick="showList()">← Voltar à lista</div>
 </div>
 
+<div class="error" id="error-msg" style="display:none;">
+  Ocorreu um erro ao carregar os apps. Verifique se o JSON existe e está correto.
+</div>
+
 <script>
 const jsonURL = '/servermanager/applist.json';
 
+// Carrega o JSON e retorna o array de apps
 async function loadApps() {
-  const res = await fetch(jsonURL);
-  const data = await res.json();
-  return data.apps;
+  try {
+    const res = await fetch(jsonURL);
+    if (!res.ok) throw new Error('Falha ao buscar JSON');
+    const data = await res.json();
+    if (!data.apps || !Array.isArray(data.apps)) throw new Error('JSON inválido');
+    return data.apps;
+  } catch (e) {
+    document.getElementById('error-msg').style.display = 'block';
+    console.error(e);
+    return [];
+  }
 }
 
+// Pega o ID do app da URL
 function getAppIDFromURL() {
   const params = new URLSearchParams(window.location.search);
-  return parseInt(params.get('app')) || null;
+  const id = parseInt(params.get('app'));
+  return isNaN(id) ? null : id;
 }
 
+// Mostra a lista de apps
 function showList() {
   document.getElementById('app-detail').style.display = 'none';
+  document.getElementById('error-msg').style.display = 'none';
   document.getElementById('app-list').style.display = 'block';
 }
 
+// Mostra detalhes de um app
 function showApp(app) {
+  if (!app) return showList();
   document.getElementById('app-list').style.display = 'none';
+  document.getElementById('error-msg').style.display = 'none';
   document.getElementById('app-detail').style.display = 'block';
   document.getElementById('app-name').textContent = app.Name;
   document.getElementById('app-date').textContent = 'Data: ' + app.Data;
   document.getElementById('app-desc').textContent = app.Desc || '';
   const linksDiv = document.getElementById('app-links');
   linksDiv.innerHTML = '';
-  app.Links.forEach(link => {
+  (app.Links || []).forEach(link => {
     const a = document.createElement('a');
     a.href = link;
     a.target = '_blank';
@@ -101,28 +122,32 @@ function showApp(app) {
   });
 }
 
+// Inicializa a página
 window.addEventListener('DOMContentLoaded', async () => {
   const apps = await loadApps();
+  if (apps.length === 0) return;
+
   const appID = getAppIDFromURL();
-  
-  if (appID && apps[appID-1]) {
-    showApp(apps[appID-1]);
-  } else {
-    const container = document.getElementById('apps-container');
-    container.innerHTML = '';
-    apps.forEach((app, index) => {
-      const div = document.createElement('div');
-      div.className = 'app-card';
-      div.innerHTML = `
-        <div class="app-title">${app.Name}</div>
-        <div class="app-date">${app.Data}</div>
-        <div class="app-desc">${app.Desc || ''}</div>
-      `;
-      div.onclick = () => window.location.href = `/zx-store/app?=${index+1}`;
-      container.appendChild(div);
-    });
-    document.getElementById('app-list').style.display = 'block';
+  if (appID) {
+    const app = apps.find(a => a.ID === appID);
+    if (app) return showApp(app);
   }
+
+  // Lista todos os apps
+  const container = document.getElementById('apps-container');
+  container.innerHTML = '';
+  apps.forEach(app => {
+    const div = document.createElement('div');
+    div.className = 'app-card';
+    div.innerHTML = `
+      <div class="app-title">${app.Name}</div>
+      <div class="app-date">${app.Data}</div>
+      <div class="app-desc">${app.Desc || ''}</div>
+    `;
+    div.onclick = () => window.location.href = `/zx-store/app?=${app.ID}`;
+    container.appendChild(div);
+  });
+  document.getElementById('app-list').style.display = 'block';
 });
 </script>
 
