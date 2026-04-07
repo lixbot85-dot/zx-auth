@@ -12,7 +12,7 @@ LIBRARY_PATH = os.path.join(BASE_PATH, "library")
 BASE_API = os.path.join(BASE_DIR, "APIs")
 JSONLOADER_FILE = os.path.join(BASE_API, "jsonloader.lua")
 SERVER_MANAGER_DIR = os.path.join(BASE_DIR, "servermanager")
-
+JSON_FILE = os.path.join(SERVER_MANAGER_DIR, "applist.json")
 # ===== HOME =====
 @app.route("/")
 def home():
@@ -23,50 +23,58 @@ def home():
         html = f.read()
     return Response(html, mimetype="text/html")
     
-# ===== ZXstore =====
+# ===== ZX STORE =====
 @app.route("/zx-store")
-def zx_store():
-    file_path = os.path.join(BASE_DIR, "templates", "store.html")
-    if not os.path.exists(file_path):
-        return """
-        <!DOCTYPE html>
-        <html lang="pt-BR">
-        <head>
-        <meta charset="UTF-8">
-        <title>ZX Store - Erro</title>
-        <style>
-          body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background:#0e0e0e; 
-            color:#fff; 
-            display:flex; 
-            flex-direction:column; 
-            justify-content:center; 
-            align-items:center; 
-            height:100vh; 
-            margin:0; 
-          }
-          h1 { color:#ff5555; margin-bottom:20px; }
-          p { color:#ccc; }
-          a { color:#4fc3f7; text-decoration:none; margin-top:15px; }
-          a:hover { text-decoration:underline; }
-        </style>
-        </head>
-        <body>
-        <h1>ZX Store não encontrada</h1>
-        <p>O arquivo <strong>store.html</strong> não existe ou ocorreu um erro ao carregá-lo.</p>
-        <a href="/">Voltar à página inicial</a>
-        </body>
-        </html>
-        """, 404
-    with open(file_path, "r", encoding="utf-8") as f:
-        html = f.read()
-    return Response(html, mimetype="text/html")
-
-# Rota para detalhes do app (mesma página HTML, JS cuida do ID)
 @app.route("/zx-store/app")
-def zx_store_app():
-    return zx_store()
+def zx_store():
+    # Carrega JSON
+    if not os.path.exists(JSON_FILE):
+        return "<h1>JSON de apps não encontrado</h1>", 404
+
+    try:
+        with open(JSON_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception as e:
+        return f"<h1>Erro ao ler JSON:</h1><p>{e}</p>", 500
+
+    apps = data.get("apps", [])
+
+    # Cria HTML diretamente
+    html = """
+    <!DOCTYPE html>
+    <html lang="pt-BR">
+    <head>
+    <meta charset="UTF-8">
+    <title>ZX Store</title>
+    <style>
+      body { font-family: sans-serif; background:#0e0e0e; color:#fff; padding:20px; }
+      h1 { text-align:center; color:#4fc3f7; }
+      .app-card { background:#1b1b1b; padding:15px; margin:10px 0; border-radius:10px; }
+      .app-card a { color:#4fc3f7; display:block; margin:5px 0; text-decoration:none; }
+      .app-card a:hover { text-decoration:underline; }
+    </style>
+    </head>
+    <body>
+    <h1>ZX Store</h1>
+    """
+
+    if not apps:
+        html += "<p>Nenhum app encontrado.</p>"
+    else:
+        for app in apps:
+            html += f'<div class="app-card">'
+            html += f'<strong>{app.get("Name","Sem Nome")}</strong> - {app.get("Data","")}<br>'
+            desc = app.get("Desc")
+            if desc:
+                html += f'<em>{desc}</em><br>'
+            links = app.get("Links", [])
+            for link in links:
+                html += f'<a href="{link}" target="_blank">Baixar</a>'
+            html += '</div>'
+
+    html += "</body></html>"
+
+    return Response(html, mimetype="text/html")
 
 # ===== APIs =====
 @app.route("/api/jsonloader")
