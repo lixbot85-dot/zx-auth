@@ -26,30 +26,16 @@ def home():
     return Response(html, mimetype="text/html")
 
 # ===== API =====
-@app.route("/api/<script>")
-def api_script(script):
-    path = os.path.join(BASE_API, script)
-
-    # verifica se existe
-    if not os.path.isdir(path):
-        return {"error": "API não encontrada"}, 404
-
-    init_path = os.path.join(path, "init.json")
-
-    # verifica init.json
-    if not os.path.isfile(init_path):
-        return {"error": "init.json não encontrado"}, 404
-
-    # carrega config
-    with open(init_path, "r") as f:
-        config = json.load(f)
-
-    # arquivo principal (default: main.lua)
-    main_file = config.get("main", "main.lua")
-
-    data_path = os.path.join(path, "data")
-
-    return send_from_directory(data_path, main_file)
+@app.route("/api/scripts")
+def list_scripts():
+    try:
+        scripts = [
+            name for name in os.listdir(BASE_API)
+            if os.path.isdir(os.path.join(BASE_API, name))
+        ]
+        return jsonify({"scripts": scripts})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # ===== debug =====
 @app.route("/debug")
