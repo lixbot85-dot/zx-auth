@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>ZX Store</title>
+<style>
+  body { 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    background:#0e0e0e; 
+    color:#fff; 
+    margin:0; 
+    padding:20px; 
+  }
+  h1 { text-align:center; color:#4fc3f7; }
+  .app-list, .app-detail { max-width:800px; margin:auto; }
+  .app-card { 
+    background:#1b1b1b; 
+    padding:20px; 
+    margin:15px 0; 
+    border-radius:12px; 
+    box-shadow:0 4px 12px rgba(0,0,0,0.5); 
+    cursor:pointer; 
+    transition:transform 0.2s, box-shadow 0.2s; 
+  }
+  .app-card:hover { 
+    transform:translateY(-3px); 
+    box-shadow:0 8px 20px rgba(0,0,0,0.7); 
+  }
+  .app-title { font-size:1.3em; font-weight:bold; color:#4fc3f7; }
+  .app-date { font-size:0.9em; color:#aaa; margin-top:5px; }
+  .app-desc { margin-top:10px; font-size:0.95em; color:#ccc; }
+  .app-links a { 
+    display:inline-block; 
+    margin:8px 5px 0 0; 
+    padding:8px 12px; 
+    background:#4fc3f7; 
+    color:#0e0e0e; 
+    text-decoration:none; 
+    border-radius:6px; 
+    font-size:0.9em; 
+    transition:background 0.2s; 
+  }
+  .app-links a:hover { background:#36a0d6; }
+  .back-btn { 
+    margin:20px 0; 
+    display:inline-block; 
+    color:#4fc3f7; 
+    cursor:pointer; 
+    font-weight:bold; 
+  }
+</style>
+</head>
+<body>
+
+<div class="app-list" id="app-list" style="display:none;">
+  <h1>ZX Store</h1>
+  <div id="apps-container"></div>
+</div>
+
+<div class="app-detail" id="app-detail" style="display:none;">
+  <h1 id="app-name"></h1>
+  <p id="app-date"></p>
+  <p id="app-desc"></p>
+  <div class="app-links" id="app-links"></div>
+  <div class="back-btn" onclick="showList()">← Voltar à lista</div>
+</div>
+
+<script>
+const jsonURL = '/servermanager/applist.json';
+
+async function loadApps() {
+  const res = await fetch(jsonURL);
+  const data = await res.json();
+  return data.apps;
+}
+
+function getAppIDFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  return parseInt(params.get('app')) || null;
+}
+
+function showList() {
+  document.getElementById('app-detail').style.display = 'none';
+  document.getElementById('app-list').style.display = 'block';
+}
+
+function showApp(app) {
+  document.getElementById('app-list').style.display = 'none';
+  document.getElementById('app-detail').style.display = 'block';
+  document.getElementById('app-name').textContent = app.Name;
+  document.getElementById('app-date').textContent = 'Data: ' + app.Data;
+  document.getElementById('app-desc').textContent = app.Desc || '';
+  const linksDiv = document.getElementById('app-links');
+  linksDiv.innerHTML = '';
+  app.Links.forEach(link => {
+    const a = document.createElement('a');
+    a.href = link;
+    a.target = '_blank';
+    a.textContent = 'Baixar';
+    linksDiv.appendChild(a);
+  });
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+  const apps = await loadApps();
+  const appID = getAppIDFromURL();
+  
+  if (appID && apps[appID-1]) {
+    showApp(apps[appID-1]);
+  } else {
+    const container = document.getElementById('apps-container');
+    container.innerHTML = '';
+    apps.forEach((app, index) => {
+      const div = document.createElement('div');
+      div.className = 'app-card';
+      div.innerHTML = `
+        <div class="app-title">${app.Name}</div>
+        <div class="app-date">${app.Data}</div>
+        <div class="app-desc">${app.Desc || ''}</div>
+      `;
+      div.onclick = () => window.location.href = `/zx-store/app?=${index+1}`;
+      container.appendChild(div);
+    });
+    document.getElementById('app-list').style.display = 'block';
+  }
+});
+</script>
+
+</body>
+</html>
