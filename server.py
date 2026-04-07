@@ -1,5 +1,5 @@
-import os
 from flask import Flask, send_from_directory, jsonify
+import os
 
 app = Flask(__name__)
 
@@ -10,7 +10,7 @@ BASE_PATH = os.path.abspath(".")
 SCRIPTS_PATH = os.path.join(BASE_PATH, "scripts")
 SCR_PATH = os.path.join(BASE_PATH, "templates")
 LIBRARY_PATH = os.path.join(BASE_PATH, "library")
-
+BASE_API = "files/APIs"
 
 # ===== HOME =====
 @app.route("/")
@@ -25,6 +25,32 @@ def home():
 
     return Response(html, mimetype="text/html")
 
+# ===== API =====
+@app.route("/api/<script>")
+def api_script(script):
+    path = os.path.join(BASE_API, script)
+
+    # verifica se existe
+    if not os.path.isdir(path):
+        return {"error": "API não encontrada"}, 404
+
+    init_path = os.path.join(path, "init.json")
+
+    # verifica init.json
+    if not os.path.isfile(init_path):
+        return {"error": "init.json não encontrado"}, 404
+
+    # carrega config
+    with open(init_path, "r") as f:
+        config = json.load(f)
+
+    # arquivo principal (default: main.lua)
+    main_file = config.get("main", "main.lua")
+
+    data_path = os.path.join(path, "data")
+
+    return send_from_directory(data_path, main_file)
+
 # ===== debug =====
 @app.route("/debug")
 def debug():
@@ -35,7 +61,7 @@ def debug():
     
     return str(os.listdir(path))
 
-# ===== FILE EXPLORER (JSON + HTML SUPPORT) =====
+# ===== FILE EXPLORER (JSON) =====
 @app.route("/files/", defaults={"req_path": ""})
 @app.route("/files/<path:req_path>")
 def files(req_path):
@@ -48,11 +74,10 @@ def files(req_path):
     if not os.path.exists(abs_path):
         return jsonify({"error": "404"}), 404
 
-    # 📁 se for arquivo → SERVE NORMAL (HTML, JS, etc)
     if os.path.isfile(abs_path):
         return send_from_directory(BASE_DIR, req_path)
 
-    # 📂 se for pasta → JSON
+
     items = []
 
     for file in os.listdir(abs_path):
