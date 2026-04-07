@@ -11,6 +11,7 @@ SCR_PATH = os.path.join(BASE_PATH, "templates")
 LIBRARY_PATH = os.path.join(BASE_PATH, "library")
 BASE_API = os.path.join(BASE_DIR, "APIs")
 JSONLOADER_FILE = os.path.join(BASE_API, "jsonloader.lua")
+SERVER_MANAGER_DIR = os.path.join(BASE_DIR, "servermanager")
 
 # ===== HOME =====
 @app.route("/")
@@ -21,6 +22,50 @@ def home():
     with open(file_path, "r", encoding="utf-8") as f:
         html = f.read()
     return Response(html, mimetype="text/html")
+    
+# ===== zxstore =====
+@app.route("/zx-store")
+def zx_store():
+    try:
+        return render_template("shop.html")
+    except Exception:
+        # Se der erro, mostra mensagem de erro estilizada
+        return """
+        <!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+        <meta charset="UTF-8">
+        <title>ZX Store - Erro</title>
+        <style>
+          body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background:#0e0e0e; 
+            color:#fff; 
+            display:flex; 
+            flex-direction:column; 
+            justify-content:center; 
+            align-items:center; 
+            height:100vh; 
+            margin:0; 
+          }
+          h1 { color:#ff5555; margin-bottom:20px; }
+          p { color:#ccc; }
+          a { color:#4fc3f7; text-decoration:none; margin-top:15px; }
+          a:hover { text-decoration:underline; }
+        </style>
+        </head>
+        <body>
+        <h1>ZX Store não encontrada</h1>
+        <p>O arquivo <strong>zx-store.html</strong> não existe ou ocorreu um erro ao carregá-lo.</p>
+        <a href="/">Voltar à página inicial</a>
+        </body>
+        </html>
+        """, 404
+
+# Rota para detalhes do app (mesma página HTML, JS cuida do ID)
+@app.route("/zx-store/app")
+def zx_store_app():
+    return zx_store()
 
 # ===== APIs =====
 @app.route("/api/jsonloader")
