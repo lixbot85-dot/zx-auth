@@ -23,13 +23,11 @@ def home():
         html = f.read()
     return Response(html, mimetype="text/html")
     
-# ===== zxstore =====
+# ===== ZXstore =====
 @app.route("/zx-store")
 def zx_store():
-    try:
-        return render_template("shop.html")
-    except Exception:
-        # Se der erro, mostra mensagem de erro estilizada
+    file_path = os.path.join(BASE_DIR, "templates", "store.html")
+    if not os.path.exists(file_path):
         return """
         <!DOCTYPE html>
         <html lang="pt-BR">
@@ -56,11 +54,14 @@ def zx_store():
         </head>
         <body>
         <h1>ZX Store não encontrada</h1>
-        <p>O arquivo <strong>zx-store.html</strong> não existe ou ocorreu um erro ao carregá-lo.</p>
+        <p>O arquivo <strong>store.html</strong> não existe ou ocorreu um erro ao carregá-lo.</p>
         <a href="/">Voltar à página inicial</a>
         </body>
         </html>
         """, 404
+    with open(file_path, "r", encoding="utf-8") as f:
+        html = f.read()
+    return Response(html, mimetype="text/html")
 
 # Rota para detalhes do app (mesma página HTML, JS cuida do ID)
 @app.route("/zx-store/app")
