@@ -1,6 +1,7 @@
 {
   "apps": [
     {
+      "ID": 1,
       "Name": "APP",
       "Data": "01/01/25",
       "Desc": "ok",
@@ -12,6 +13,7 @@
       ]
     },
     {
+      "ID": 2,
       "Name": "Outro App",
       "Data": "05/03/26",
       "Desc": "Descrição opcional",
