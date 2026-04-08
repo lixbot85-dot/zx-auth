@@ -12606,28 +12606,340 @@ addcmd('thawunanchored',{'thawua','unfreezeunanchored','unfreezeua'},function(ar
     frozenParts = {}
 end)
 
-addcmd('tpunanchored',{'tpua'},function(args, speaker)
+addcmd('unlockkiller', {'unk'}, function(args, speaker)
+    local function UnlockKiller(name)
+        local target = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Killers"):FindFirstChild(name)
+
+        if not target then
+            warn("[ZX] Killer não encontrado: " .. name)
+            return
+        end
+
+        local success, err = pcall(function()
+            ReplicatedStorage.Modules.Network.RemoteFunction:InvokeServer("PurchaseContent", target)
+        end)
+
+        task.wait(0.3)
+
+        local purchased = LocalPlayer:FindFirstChild("Data")
+            and LocalPlayer.Data:FindFirstChild("Purchased")
+            and LocalPlayer.Data.Purchased:FindFirstChild("Killers")
+            and LocalPlayer.Data.Purchased.Killers:FindFirstChild(name)
+
+        if purchased then
+            print("[ZX] Killer desbloqueado: " .. name)
+        else
+            warn("[ZX] Falhou ao desbloquear killer: " .. name)
+            if err then warn(err) end
+        end
+    end
+
+    -- ALL killers
+    if args[1] == "all" then
+        local killers = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Killers")
+
+        for _, killer in pairs(killers:GetChildren()) do
+            UnlockKiller(killer.Name)
+            task.wait(math.random(2,5)/10) -- delay stealth
+        end
+
+        print("[ZX] Todos killers desbloqueados!")
+        return
+    end
+
+    -- individual
+    if args[1] then
+        UnlockKiller(args[1])
+    else
+        warn("[ZX] Usa: unlockkiller <nome/all>")
+    end
+end)
+
+addcmd('unlocksurvivor', {'uns'}, function(args, speaker)
+    local function UnlockSurvivor(name)
+        local target = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Survivors"):FindFirstChild(name)
+
+        if not target then
+            warn("[ZX] Survivor não encontrado: " .. name)
+            return
+        end
+
+        local success, err = pcall(function()
+            ReplicatedStorage.Modules.Network.RemoteFunction:InvokeServer("PurchaseContent", target)
+        end)
+
+        task.wait(0.3)
+
+        local purchased = LocalPlayer:FindFirstChild("Data")
+            and LocalPlayer.Data:FindFirstChild("Purchased")
+            and LocalPlayer.Data.Purchased:FindFirstChild("Survivors")
+            and LocalPlayer.Data.Purchased.Survivors:FindFirstChild(name)
+
+        if purchased then
+            print("[ZX] Desbloqueado: " .. name)
+        else
+            warn("[ZX] Falhou: " .. name)
+            if err then warn(err) end
+        end
+    end
+
+    -- unlock ALL
+    if args[1] == "all" then
+        local survivors = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Survivors")
+
+        for _, survivor in pairs(survivors:GetChildren()) do
+            UnlockSurvivor(survivor.Name)
+            task.wait(math.random(2,5)/10) -- delay stealth
+        end
+
+        print("[ZX] Todos survivors desbloqueados!")
+        return
+    end
+
+    -- unlock individual
+    if args[1] then
+        UnlockSurvivor(args[1])
+    else
+        warn("[ZX] Usa: unlocksurvivor <nome/all>")
+    end
+end)
+
+addcmd('unlockskin', {'usk'}, function(args, speaker)
+
+    local function UnlockSurvivorSkin(survivorName, skinName)
+        local survivorsFolder = ReplicatedStorage:WaitForChild("Assets")
+            :WaitForChild("Skins")
+            :WaitForChild("Survivors")
+
+        local survivorFolder = survivorsFolder:FindFirstChild(survivorName)
+
+        if not survivorFolder then
+            warn("[ZX] Survivor não encontrado: " .. survivorName)
+            return
+        end
+
+        local target = survivorFolder:FindFirstChild(skinName)
+
+        if not target then
+            warn("[ZX] Skin não encontrada: " .. skinName)
+            return
+        end
+
+        local success, err = pcall(function()
+            ReplicatedStorage.Modules.Network.RemoteFunction:InvokeServer("PurchaseContent", target)
+        end)
+
+        if success then
+            print("[ZX] Skin desbloqueada: " .. survivorName .. " - " .. skinName)
+        else
+            warn("[ZX] Falhou ao desbloquear skin: " .. skinName)
+            if err then warn(err) end
+        end
+    end
+
+    -- ALL skins de um survivor
+    if args[1] and args[2] == "all" then
+        local survivorsFolder = ReplicatedStorage:WaitForChild("Assets")
+            :WaitForChild("Skins")
+            :WaitForChild("Survivors")
+
+        local survivorFolder = survivorsFolder:FindFirstChild(args[1])
+
+        if not survivorFolder then
+            warn("[ZX] Survivor não encontrado: " .. args[1])
+            return
+        end
+
+        for _, skin in pairs(survivorFolder:GetChildren()) do
+            UnlockSurvivorSkin(args[1], skin.Name)
+            task.wait(math.random(2,5)/10)
+        end
+
+        print("[ZX] Todas skins de " .. args[1] .. " desbloqueadas!")
+        return
+    end
+
+    -- individual
+    if args[1] and args[2] then
+        UnlockSurvivorSkin(args[1], args[2])
+    else
+        warn("[ZX] Usa: unlockskin <survivor> <skin/all>")
+    end
+end)
+
+addcmd('unlockkillerskin', {'ukk'}, function(args, speaker)
+
+    local function UnlockKillerSkin(killerName, skinName)
+        local killersFolder = ReplicatedStorage:WaitForChild("Assets")
+            :WaitForChild("Skins")
+            :WaitForChild("Killers")
+
+        local killerFolder = killersFolder:FindFirstChild(killerName)
+
+        if not killerFolder then
+            warn("[ZX] Killer não encontrado: " .. killerName)
+            return
+        end
+
+        local target = killerFolder:FindFirstChild(skinName)
+
+        if not target then
+            warn("[ZX] Skin não encontrada: " .. skinName)
+            return
+        end
+
+        local success, err = pcall(function()
+            ReplicatedStorage.Modules.Network.RemoteFunction:InvokeServer("PurchaseContent", target)
+        end)
+
+        if success then
+            print("[ZX] Skin desbloqueada: " .. killerName .. " - " .. skinName)
+        else
+            warn("[ZX] Falhou ao desbloquear skin: " .. skinName)
+            if err then warn(err) end
+        end
+    end
+
+    -- ALL skins de um killer
+    if args[1] and args[2] == "all" then
+        local killersFolder = ReplicatedStorage:WaitForChild("Assets")
+            :WaitForChild("Skins")
+            :WaitForChild("Killers")
+
+        local killerFolder = killersFolder:FindFirstChild(args[1])
+
+        if not killerFolder then
+            warn("[ZX] Killer não encontrado: " .. args[1])
+            return
+        end
+
+        for _, skin in pairs(killerFolder:GetChildren()) do
+            UnlockKillerSkin(args[1], skin.Name)
+            task.wait(math.random(2,5)/10)
+        end
+
+        print("[ZX] Todas skins de " .. args[1] .. " desbloqueadas!")
+        return
+    end
+
+    -- individual
+    if args[1] and args[2] then
+        UnlockKillerSkin(args[1], args[2])
+    else
+        warn("[ZX] Usa: unlockkillerskin <killer> <skin/all>")
+    end
+end)
+
+addcmd('unlockemote', {'une'}, function(args, speaker)
+
+    local function UnlockEmote(name)
+        local target = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Emotes"):FindFirstChild(name)
+
+        if not target then
+            warn("[ZX] Emote não encontrado: " .. name)
+            return
+        end
+
+        local success, err = pcall(function()
+            ReplicatedStorage.Modules.Network.RemoteFunction:InvokeServer("PurchaseContent", target)
+        end)
+
+        task.wait(0.3)
+
+        local purchased = LocalPlayer:FindFirstChild("Data")
+            and LocalPlayer.Data:FindFirstChild("Purchased")
+            and LocalPlayer.Data.Purchased:FindFirstChild("Emotes")
+            and LocalPlayer.Data.Purchased.Emotes:FindFirstChild(name)
+
+        if purchased then
+            print("[ZX] Emote desbloqueado: " .. name)
+        else
+            warn("[ZX] Falhou ao desbloquear emote: " .. name)
+            if err then warn(err) end
+        end
+    end
+
+    -- ALL emotes
+    if args[1] == "all" then
+        local emotes = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Emotes")
+
+        for _, emote in pairs(emotes:GetChildren()) do
+            UnlockEmote(emote.Name)
+            task.wait(math.random(2,5)/10) -- stealth
+        end
+
+        print("[ZX] Todos emotes desbloqueados!")
+        return
+    end
+
+    -- individual
+    if args[1] then
+        UnlockEmote(args[1])
+    else
+        warn("[ZX] Usa: unlockemote <nome/all>")
+    end
+end)
+
+addcmd('tpublackhole', {'tpubh'}, function(args, speaker)
     local players = getPlayer(args[1], speaker)
-    for i,v in pairs(players) do
-        local Forces = {}
-        for _,part in pairs(workspace:GetDescendants()) do
-            if Players[v].Character:FindFirstChild('Head') and part:IsA("BasePart" or "UnionOperation" or "Model") and part.Anchored == false and not part:IsDescendantOf(speaker.Character) and part.Name == "Torso" == false and part.Name == "Head" == false and part.Name == "Right Arm" == false and part.Name == "Left Arm" == false and part.Name == "Right Leg" == false and part.Name == "Left Leg" == false and part.Name == "HumanoidRootPart" == false then
-                for i,c in pairs(part:GetChildren()) do
-                    if c:IsA("BodyPosition") or c:IsA("BodyGyro") then
-                        c:Destroy()
+
+    for _, v in pairs(players) do
+        local target = Players:FindFirstChild(v)
+        if target and target.Character and target.Character:FindFirstChild("Head") then
+            
+            local head = target.Character.Head
+
+            for _, part in pairs(workspace:GetDescendants()) do
+                if part:IsA("BasePart")
+                and not part.Anchored
+                and not part:IsDescendantOf(speaker.Character)
+                and part.Name ~= "Torso"
+                and part.Name ~= "Head"
+                and part.Name ~= "HumanoidRootPart" then
+
+                    -- limpa forças antigas
+                    for _, c in pairs(part:GetChildren()) do
+                        if c:IsA("BodyPosition") or c:IsA("BodyGyro") then
+                            c:Destroy()
+                        end
+                    end
+
+                    local bp = Instance.new("BodyPosition")
+                    bp.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+                    bp.P = 5000
+                    bp.D = 200
+                    bp.Parent = part
+
+                    local bg = Instance.new("BodyGyro")
+                    bg.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+                    bg.P = 3000
+                    bg.Parent = part
+
+                    -- loop de movimento (orbitar)
+                    task.spawn(function()
+                        local angle = math.random() * math.pi * 2
+                        while part and part.Parent and target.Character and head do
+                            angle += 0.1
+
+                            local radius = 5 + math.sin(tick()*2)*2
+                            local offset = Vector3.new(
+                                math.cos(angle) * radius,
+                                math.sin(angle*2) * 2,
+                                math.sin(angle) * radius
+                            )
+
+                            bp.Position = head.Position + offset
+                            bg.CFrame = CFrame.lookAt(part.Position, head.Position)
+
+                            task.wait()
+                        end
+                    end)
+
+                    if not table.find(frozenParts, part) then
+                        table.insert(frozenParts, part)
                     end
                 end
-                local ForceInstance = Instance.new("BodyPosition")
-                ForceInstance.Parent = part
-                ForceInstance.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-                table.insert(Forces, ForceInstance)
-                if not table.find(frozenParts,part) then
-                    table.insert(frozenParts,part)
-                end
             end
-        end
-        for i,c in pairs(Forces) do
-            c.Position = Players[v].Character.Head.Position
         end
     end
 end)
@@ -12968,7 +13280,7 @@ end)
 
 task.spawn(function()
 	local success, latestVersionInfo = pcall(function() 
-		local versionJson = game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/version")
+		local versionJson = game:HttpGet("https://github.com/lixbot85-dot/zx-auth/raw/refs/heads/main/servermanager/IYver")
 		return HttpService:JSONDecode(versionJson)
 	end)
 
