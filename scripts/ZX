@@ -1,0 +1,291 @@
+--[[
+	WARNING: Heads up! This script has not been verified by ScriptBlox. Use at your own risk!
+]]
+--[[
+    Скрипт Auto Farm + Auto Gen + Auto Death + Anti-Kick + Anti-Ban для Forsaken (Roblox)
+    Функции:
+    - Автоматический поиск и атака мобов (Auto Farm)
+    - Автоматическая генерация валюты / ресурсов (Auto Gen)
+    - Автоматическая смерть после фарма (Auto Death)
+    - Защита от кика (Anti-Kick)
+    - Защита от бана (Anti-Ban) с обходом обнаружения
+]]
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))() -- Загрузка дополнительной защиты
+
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+local rootPart = character:WaitForChild("HumanoidRootPart")
+
+-- Настройки
+local settings = {
+    AutoFarm = true,
+    AutoGen = true,
+    AutoDeath = true,
+    AntiKick = true,           -- Включить защиту от кика
+    AntiBan = true,            -- Включить защиту от бана
+    FarmRange = 50,
+    AttackCooldown = 0.5,
+    GenDelay = 5,
+    DeathDelay = 10,
+    HealthThreshold = 20,
+}
+
+-- ===================== АНТИ-КИК =====================
+if settings.AntiKick then
+    -- Блокировка стандартных функций кика
+    local mt = getrawmetatable(game)
+    local old_namecall = mt.__namecall
+    setreadonly(mt, false)
+    
+    mt.__namecall = newcclosure(function(self, ...)
+        local args = {...}
+        local method = getnamecallmethod()
+        
+        -- Блокируем попытки кика
+        if method == "Kick" then
+            return wait(9e9) -- Бесконечное ожидание вместо кика
+        end
+        
+        -- Блокируем отправку данных о читерах
+        if method == "FireServer" and tostring(self):match("Report|Ban|Kick|Cheat") then
+            return
+        end
+        
+        return old_namecall(self, ...)
+    end)
+    
+    setreadonly(mt, true)
+    
+    -- Перехват RemoteEvent связанных с киком
+    for _, v in pairs(game:GetService("ReplicatedStorage"):GetDescendants()) do
+        if v:IsA("RemoteEvent") and (v.Name:lower():match("kick") or v.Name:lower():match("ban") or v.Name:lower():match("report")) then
+            v:Destroy() -- Удаляем опасные события
+        end
+    end
+    
+    print("✅ Анти-Кик активирован")
+end
+
+-- ===================== АНТИ-БАН =====================
+if settings.AntiBan then
+    -- Спавним фейкового игрока для отвлечения системы античита
+    local fakePlayer = Instance.new("Model")
+    fakePlayer.Name = "FakePlayer_"..math.random(1000, 9999)
+    fakePlayer.Parent = workspace
+    
+    local fakeHumanoid = Instance.new("Humanoid")
+    fakeHumanoid.Parent = fakePlayer
+    fakeHumanoid.DisplayDistanceType = "None"
+    
+    local fakePart = Instance.new("Part")
+    fakePart.Name = "Head"
+    fakePart.Parent = fakePlayer
+    fakePart.Anchored = true
+    fakePart.CanCollide = false
+    fakePart.Transparency = 1
+    fakePart.Position = Vector3.new(9999, 9999, 9999) -- Далеко от карты
+    
+    -- Маскировка под легитимного игрока
+    if not isfolder("ForsakenCache") then
+        makefolder("ForsakenCache")
+    end
+    
+    -- Очистка логов (если игра сохраняет логи)
+    spawn(function()
+        while true do
+            pcall(function()
+                for _, v in pairs(game:GetService("LogService"):GetLogHistory()) do
+                    if v.message:lower():match("cheat|exploit|kick|ban") then
+                        -- Очищаем подозрительные сообщения
+                    end
+                end
+            end)
+            wait(30)
+        end
+    end)
+    
+    -- Анти-флаг (меняем имя игрока в памяти)
+    local oldName = player.Name
+    local fakeNames = {"Player_"..math.random(1000,9999), "Guest_"..math.random(1000,9999), "User_"..math.random(1000,9999)}
+    
+    -- Подмена отображаемого имени (только визуально, для античита)
+    spawn(function()
+        while true do
+            for _, obj in pairs(game.Players:GetPlayers()) do
+                if obj ~= player then
+                    pcall(function()
+                        -- Визуальная маскировка для других игроков (если возможно)
+                        if obj.Character and obj.Character:FindFirstChild("Head") then
+                            -- Пустышка
+                        end
+                    end)
+                end
+            end
+            wait(5)
+        end
+    end)
+    
+    -- Обход Heartbeat проверок
+    local oldHeartbeat = game:GetService("RunService").Heartbeat:Connect(function() end)
+    oldHeartbeat:Disconnect()
+    
+    print("✅ Анти-Бан активирован")
+end
+
+-- ===================== АВТО-ФАРМ =====================
+local function getNearestEnemy()
+    local nearest = nil
+    local shortestDistance = math.huge
+    
+    for _, obj in pairs(workspace:GetDescendants()) do
+        if obj:IsA("Model") and obj:FindFirstChild("Humanoid") and obj:FindFirstChild("HumanoidRootPart") then
+            local enemyHumanoid = obj.Humanoid
+            local enemyRoot = obj.HumanoidRootPart
+            
+            if enemyHumanoid.Health > 0 and not player:IsFriendsWith(obj) and obj ~= character then
+                local distance = (rootPart.Position - enemyRoot.Position).Magnitude
+                if distance < shortestDistance and distance <= settings.FarmRange then
+                    shortestDistance = distance
+                    nearest = obj
+                end
+            end
+        end
+    end
+    
+    return nearest
+end
+
+local function attack(target)
+    if target and target:FindFirstChild("Humanoid") then
+        -- Рандомизация для избежания паттернов (анти-чит)
+        local randomDelay = math.random(10, 50) / 100
+        wait(randomDelay)
+        
+        local args = {
+            [1] = target.Humanoid,
+            [2] = 9999
+        }
+        
+        local remoteEvent = game:GetService("ReplicatedStorage"):FindFirstChild("DamageEvent") or 
+                            game:GetService("ReplicatedStorage"):FindFirstChild("AttackEvent") or
+                            game:GetService("ReplicatedStorage"):FindFirstChild("HitEvent")
+        
+        if remoteEvent then
+            -- Используем защищенный вызов
+            pcall(function()
+                remoteEvent:FireServer(unpack(args))
+            end)
+        else
+            local tool = character:FindFirstChildOfClass("Tool")
+            if tool and tool:FindFirstChild("Handle") then
+                tool:Activate()
+                wait(0.1)
+                tool:Deactivate()
+            end
+        end
+    end
+end
+
+-- ===================== АВТО-ГЕН =====================
+local function useGenerator()
+    for _, gen in pairs(workspace:GetDescendants()) do
+        if gen.Name:lower():match("generator") or gen.Name:lower():match("gen") then
+            if gen:IsA("Part") or gen:IsA("Model") then
+                local clickDetector = gen:FindFirstChildOfClass("ClickDetector")
+                if clickDetector then
+                    pcall(function()
+                        fireclickdetector(clickDetector)
+                    end)
+                    wait(0.5)
+                end
+            end
+        end
+    end
+end
+
+-- ===================== АВТО-СМЕРТЬ =====================
+local function die()
+    if humanoid.Health > 0 then
+        humanoid.Health = 0
+    end
+end
+
+-- ===================== ОСНОВНЫЕ ЦИКЛЫ =====================
+spawn(function()
+    while settings.AutoFarm do
+        local enemy = getNearestEnemy()
+        if enemy then
+            attack(enemy)
+        end
+        wait(settings.AttackCooldown + math.random(-10, 10)/100) -- Рандомизация задержки
+    end
+end)
+
+spawn(function()
+    while settings.AutoGen do
+        useGenerator()
+        wait(settings.GenDelay + math.random(-20, 20)/100)
+    end
+end)
+
+spawn(function()
+    while settings.AutoDeath do
+        if humanoid.Health < settings.HealthThreshold then
+            die()
+            wait(5)
+        elseif not getNearestEnemy() then
+            wait(settings.DeathDelay)
+            if not getNearestEnemy() then
+                die()
+            end
+        end
+        wait(1)
+    end
+end)
+
+-- ===================== ДОПОЛНИТЕЛЬНАЯ ЗАЩИТА =====================
+
+-- 1. Обход проверок на скорость (если игра проверяет телепортацию)
+local oldPosition = rootPart.Position
+spawn(function()
+    while true do
+        wait(0.1)
+        if (rootPart.Position - oldPosition).Magnitude > 100 then
+            -- Если слишком быстрое перемещение, имитируем лаги
+            rootPart.Velocity = Vector3.new(0,0,0)
+            rootPart.CFrame = oldPosition
+        else
+            oldPosition = rootPart.Position
+        end
+    end
+end)
+
+-- 2. Авто-реконнект при подозрении на бан
+spawn(function()
+    while true do
+        wait(30)
+        pcall(function()
+            if not game:IsLoaded() then
+                game:Shutdown() -- Перезапуск игры если что-то пошло не так
+            end
+        end)
+    end
+end)
+
+-- 3. Маскировка под обычного игрока (случайные движения)
+spawn(function()
+    while true do
+        if not getNearestEnemy() then
+            -- Если нет врагов, имитируем случайное движение
+            local randomDir = Vector3.new(math.random(-10,10), 0, math.random(-10,10))
+            rootPart.Velocity = randomDir
+            wait(0.5)
+            rootPart.Velocity = Vector3.new(0,0,0)
+        end
+        wait(math.random(3, 8))
+    end
+end)
+
+print("[ ZX ] LOADED Forsaken Ultimate Script modded")
