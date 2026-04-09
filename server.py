@@ -126,8 +126,8 @@ def zxlib():
     return response
 
 # ===== ZXIY =====
-@app.route("/iyv")
-def zxlib():
+@app.route("/infinite")
+def iy():
     path = os.path.join(SCRIPTS_PATH, "IY.lua")
     if not os.path.exists(path):
         return "não encontrado", 404
@@ -137,7 +137,7 @@ def zxlib():
 
 # ===== ESP =====
 @app.route("/esp")
-def zxlib():
+def esp():
     path = os.path.join(SCRIPTS_PATH, "forsaken-ESP.lua")
     if not os.path.exists(path):
         return "não encontrado", 404
@@ -147,7 +147,7 @@ def zxlib():
 
 # ===== BobbyHub =====
 @app.route("/bobbyhub")
-def zxlib():
+def bobbyhub():
     path = os.path.join(SCRIPTS_PATH, "bobbyhub.lua")
     if not os.path.exists(path):
         return "não encontrado", 404
