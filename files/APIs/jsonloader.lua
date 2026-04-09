@@ -1,4 +1,6 @@
 -- <-Json Loader V1-> --
+-- <-Simple Code-> --
+-- Made by zxrealm in scriptblox :> --
 local JsonLoader = {}
 
 function JsonLoader.Load(url)
