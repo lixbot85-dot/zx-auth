@@ -125,6 +125,36 @@ def zxlib():
     response.headers["Cache-Control"] = "no-store"
     return response
 
+# ===== ZXIY =====
+@app.route("/iyv")
+def zxlib():
+    path = os.path.join(SCRIPTS_PATH, "IY.lua")
+    if not os.path.exists(path):
+        return "não encontrado", 404
+    response = send_from_directory(SCRIPTS_PATH, "IY.lua")
+    response.headers["Cache-Control"] = "no-store"
+    return response
+
+# ===== ESP =====
+@app.route("/esp")
+def zxlib():
+    path = os.path.join(SCRIPTS_PATH, "forsaken-ESP.lua")
+    if not os.path.exists(path):
+        return "não encontrado", 404
+    response = send_from_directory(SCRIPTS_PATH, "forsaken-ESP.lua")
+    response.headers["Cache-Control"] = "no-store"
+    return response
+
+# ===== BobbyHub =====
+@app.route("/bobbyhub")
+def zxlib():
+    path = os.path.join(SCRIPTS_PATH, "bobbyhub.lua")
+    if not os.path.exists(path):
+        return "não encontrado", 404
+    response = send_from_directory(SCRIPTS_PATH, "bobbyhub.lua")
+    response.headers["Cache-Control"] = "no-store"
+    return response
+
 # ===== ZXHUB =====
 @app.route("/zxhub")
 def zxhub():
