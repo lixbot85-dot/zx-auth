@@ -24,57 +24,6 @@ def home():
         html = f.read()
     return Response(html, mimetype="text/html")
 
-@app.route("/servers")
-def server_page():
-    return """
-    <html>
-    <head>
-        <title>ZX Servers</title>
-        <style>
-            body {
-                background-color: #0f0f0f;
-                color: white;
-                font-family: Arial;
-                text-align: center;
-            }
-            .server {
-                border: 1px solid #444;
-                margin: 20px;
-                padding: 15px;
-                border-radius: 10px;
-                background-color: #1a1a1a;
-                cursor: pointer;
-            }
-            .server:hover {
-                background-color: #2a2a2a;
-            }
-        </style>
-    </head>
-    <body>
-        <h1>ZX Minecraft Servers</h1>
-
-        <div class="server" onclick="copyIP('play.zxserver.com')">
-            <h2>ZX Survival</h2>
-            <p>IP: play.zxserver.com</p>
-            <p>Versão: 1.20+</p>
-        </div>
-
-        <div class="server" onclick="copyIP('mod.zxserver.com')">
-            <h2>ZX Computers</h2>
-            <p>IP: mod.zxserver.com</p>
-            <p>Mods + Lua integration</p>
-        </div>
-
-        <script>
-            function copyIP(ip) {
-                navigator.clipboard.writeText(ip);
-                alert("IP copiado: " + ip);
-            }
-        </script>
-    </body>
-    </html>
-    """
-
 # ===== ZX STORE =====
 @app.route("/zx-store")
 @app.route("/zx-store/app")
@@ -133,15 +82,6 @@ def api_jsonloader():
         return send_from_directory(BASE_API, "jsonloader.lua")
     else:
         abort(404, description="jsonloader.lua não encontrado")
-
-@app.route("/api/servers")
-def servers_api():
-    return {
-        "servers": [
-            {"name": "ZX Survival", "ip": "play.zxserver.com"},
-            {"name": "ZX Modded", "ip": "mod.zxserver.com"}
-        ]
-    }
 
 # ===== DEBUG =====
 @app.route("/debug")
