@@ -33,7 +33,25 @@ def get_preview_html(folder, filename):
     if ext in ["png", "jpg", "jpeg", "gif", "webp"]:
         return f'<img src="{file_url}" style="max-width:300px;">'
 
-    # texto simples
+    # vídeos
+    if ext in ["mp4", "webm", "ogg"]:
+        return f'''
+        <video controls style="max-width:400px;">
+            <source src="{file_url}" type="video/{ext}">
+            Seu navegador não suporta vídeo.
+        </video>
+        '''
+
+    # áudio
+    if ext in ["mp3", "wav", "ogg"]:
+        return f'''
+        <audio controls>
+            <source src="{file_url}" type="audio/{ext}">
+            Seu navegador não suporta áudio.
+        </audio>
+        '''
+
+    # texto
     if ext in ["txt", "json", "lua", "py", "js"]:
         try:
             path = os.path.join("files", folder, filename)
