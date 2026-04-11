@@ -24,6 +24,49 @@ def home():
         html = f.read()
     return Response(html, mimetype="text/html")
 
+# ===== UPLOAD =====
+UPLOAD_BASE = os.path.join(os.getcwd(), "files")
+
+# garantir que pasta existe
+os.makedirs(UPLOAD_BASE, exist_ok=True)
+
+@app.route("/upload/<path:folder>", methods=["GET", "POST"])
+def upload_file(folder):
+    target_folder = os.path.join(UPLOAD_BASE, folder)
+
+    # segurança
+    if not os.path.abspath(target_folder).startswith(os.path.abspath(UPLOAD_BASE)):
+        return abort(403)
+
+    os.makedirs(target_folder, exist_ok=True)
+
+    if request.method == "POST":
+        if "file" not in request.files:
+            return "Nenhum arquivo enviado"
+
+        file = request.files["file"]
+
+        if file.filename == "":
+            return "Arquivo inválido"
+
+        filepath = os.path.join(target_folder, file.filename)
+        file.save(filepath)
+
+        return f"Arquivo enviado para /files/{folder}/{file.filename}"
+
+    return f"""
+    <html>
+    <body style="background:#111;color:white;font-family:Arial;text-align:center;">
+        <h1>Upload para /files/{folder}</h1>
+
+        <form method="POST" enctype="multipart/form-data">
+            <input type="file" name="file"><br><br>
+            <button type="submit">Enviar</button>
+        </form>
+    </body>
+    </html>
+    """
+
 # ===== ZX STORE =====
 @app.route("/zx-store")
 @app.route("/zx-store/app")
