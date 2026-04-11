@@ -24,18 +24,44 @@ def home():
         html = f.read()
     return Response(html, mimetype="text/html")
 
+# ===== PREVIEW =====
+def get_preview_html(folder, filename):
+    file_url = f"/files/{folder}/{filename}".replace("//", "/")
+    ext = filename.lower().split(".")[-1]
+
+    # imagens
+    if ext in ["png", "jpg", "jpeg", "gif", "webp"]:
+        return f'<img src="{file_url}" style="max-width:300px;">'
+
+    # texto simples
+    if ext in ["txt", "json", "lua", "py", "js"]:
+        try:
+            path = os.path.join("files", folder, filename)
+            with open(path, "r", encoding="utf-8", errors="ignore") as f:
+                content = f.read(500)
+            return f"<pre>{content}</pre>"
+        except:
+            return "<p>Erro ao ler arquivo</p>"
+
+    # outros
+    return f'<a href="{file_url}" target="_blank">Abrir arquivo</a>'
+
 # ===== UPLOAD =====
 UPLOAD_BASE = os.path.join(os.getcwd(), "files")
-
-# garantir que pasta existe
 os.makedirs(UPLOAD_BASE, exist_ok=True)
+
+
+def is_safe_path(base, path):
+    return os.path.abspath(path).startswith(os.path.abspath(base))
+
 
 @app.route("/upload/<path:folder>", methods=["GET", "POST"])
 def upload_file(folder):
+    folder = folder.strip("/")
+
     target_folder = os.path.join(UPLOAD_BASE, folder)
 
-    # segurança
-    if not os.path.abspath(target_folder).startswith(os.path.abspath(UPLOAD_BASE)):
+    if not is_safe_path(UPLOAD_BASE, target_folder):
         return abort(403)
 
     os.makedirs(target_folder, exist_ok=True)
@@ -49,10 +75,29 @@ def upload_file(folder):
         if file.filename == "":
             return "Arquivo inválido"
 
-        filepath = os.path.join(target_folder, file.filename)
+        # nome
+        custom_name = request.form.get("filename")
+
+        if custom_name:
+            filename = custom_name
+        else:
+            filename = file.filename
+
+        filepath = os.path.join(target_folder, filename)
         file.save(filepath)
 
-        return f"Arquivo enviado para /files/{folder}/{file.filename}"
+        return f"""
+        <body style="background:#111;color:white;text-align:center;">
+            <h2>Arquivo enviado!</h2>
+            <p>/files/{folder}/{filename}</p>
+
+            <h3>Preview:</h3>
+            {get_preview_html(folder, filename)}
+
+            <br><br>
+            <a href="/explorer/{folder}">Voltar</a>
+        </body>
+        """
 
     return f"""
     <html>
@@ -61,6 +106,9 @@ def upload_file(folder):
 
         <form method="POST" enctype="multipart/form-data">
             <input type="file" name="file"><br><br>
+
+            <input type="text" name="filename" placeholder="Novo nome (opcional)"><br><br>
+
             <button type="submit">Enviar</button>
         </form>
     </body>
