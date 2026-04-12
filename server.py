@@ -1,5 +1,5 @@
 from flask import Flask, send_from_directory, jsonify, Response, abort, request, url_for, redirect
-import os, json
+import os, json, sqlite3
 
 app = Flask(__name__)
 
@@ -14,6 +14,27 @@ JSONLOADER_FILE = os.path.join(BASE_API, "jsonloader.lua")
 SERVER_MANAGER_DIR = os.path.join(BASE_DIR, "servermanager")
 JSON_FILE = os.path.join(SERVER_MANAGER_DIR, "applist.json")
 
+# ===== DATABASE =====
+def get_db():
+    return sqlite3.connect("songs.db")
+
+def init_db():
+    conn = get_db()
+    cur = conn.cursor()
+
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS songs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        roblox_id TEXT
+    )
+    """)
+
+    conn.commit()
+    conn.close()
+
+init_db()
+
 # ===== HOME =====
 @app.route("/")
 def home():
@@ -25,7 +46,7 @@ def home():
     return Response(html, mimetype="text/html")
 
 # ===== SONGS =====
-@app.route("/api/songs")
+@app.route("/api/songslocal")
 def songs():
     return jsonify({
         "songs": [
@@ -34,6 +55,23 @@ def songs():
             {"name": "FIRE SLASHER", "id": "118056082854908"}
         ]
     })
+
+@app.route("/api/songs")
+def api_songs():
+    conn = get_db()
+    cur = conn.cursor()
+
+    cur.execute("SELECT name, roblox_id FROM songs")
+    rows = cur.fetchall()
+
+    conn.close()
+
+    songs = [
+        {"name": r[0], "id": r[1]}
+        for r in rows
+    ]
+
+    return jsonify({"songs": songs})
 
 # ===== PREVIEW =====
 def get_preview_html(folder, filename):
@@ -295,6 +333,42 @@ def musiclist():
     response = send_from_directory(LIBRARY_PATH, "songlist.json")
     response.headers["Cache-Control"] = "no-store"
     return response
+
+# ===== UPLOAD SONGS =====
+
+@app.route("/uploadid", methods=["POST"])
+def upload():
+    data = request.json
+
+    name = data.get("name", "Unknown")
+    roblox_id = data.get("id")
+
+    conn = get_db()
+    cur = conn.cursor()
+
+    cur.execute(
+        "INSERT INTO songs (name, roblox_id) VALUES (?, ?)",
+        (name, roblox_id)
+    )
+
+    conn.commit()
+
+@app.route("/songs")
+def songs_page():
+    conn = get_db()
+    cur = conn.cursor()
+
+    cur.execute("SELECT name, roblox_id FROM songs")
+    rows = cur.fetchall()
+
+    conn.close()
+
+    html = "<h1>ZX Songs</h1>"
+
+    for name, rid in rows:
+        html += f"<p>{name} - {rid}</p>"
+
+    return html
 
 # ===== RUN =====
 if __name__ == "__main__":
