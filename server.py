@@ -294,6 +294,16 @@ def iy():
     response.headers["Cache-Control"] = "no-store"
     return response
 
+# ===== Libz =====
+@app.route("/libz")
+def libz():
+    path = os.path.join(SCRIPTS_PATH, "LibzUIpub.lua")
+    if not os.path.exists(path):
+        return "não encontrado", 404
+    response = send_from_directory(SCRIPTS_PATH, "IY.lua")
+    response.headers["Cache-Control"] = "no-store"
+    return response
+
 # ===== ESP =====
 @app.route("/esp")
 def esp():
