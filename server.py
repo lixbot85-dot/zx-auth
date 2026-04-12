@@ -24,6 +24,17 @@ def home():
         html = f.read()
     return Response(html, mimetype="text/html")
 
+# ===== SONGS =====
+@app.route("/api/songs")
+def songs():
+    return jsonify({
+        "songs": [
+            {"name": "TLTB - I want to be a machine", "id": "101547890879928"},
+            {"name": "TSB - DIVE", "id": "96096795516863"},
+            {"name": "FIRE SLASHER", "id": "118056082854908"}
+        ]
+    })
+
 # ===== PREVIEW =====
 def get_preview_html(folder, filename):
     file_url = f"/files/{folder}/{filename}".replace("//", "/")
