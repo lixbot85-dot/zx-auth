@@ -336,22 +336,42 @@ def musiclist():
 
 # ===== UPLOAD SONGS =====
 
-@app.route("/uploadid", methods=["POST"])
+@app.route("/uploadid", methods=["GET", "POST"])
 def upload():
-    data = request.json
+    if request.method == "POST":
+        roblox_id = request.form.get("id")
+        name = request.form.get("name", "Unknown")
 
-    name = data.get("name", "Unknown")
-    roblox_id = data.get("id")
+        if roblox_id:
+            conn = get_db()
+            cur = conn.cursor()
 
-    conn = get_db()
-    cur = conn.cursor()
+            cur.execute(
+                "INSERT INTO songs (name, roblox_id) VALUES (?, ?)",
+                (name, roblox_id)
+            )
 
-    cur.execute(
-        "INSERT INTO songs (name, roblox_id) VALUES (?, ?)",
-        (name, roblox_id)
-    )
+            conn.commit()
+            conn.close()
 
-    conn.commit()
+            return f"""
+            <h2>Música salva!</h2>
+            <p>{name} - {roblox_id}</p>
+            <a href="/uploadid">Voltar</a>
+            """
+
+    return """
+    <h1>ZX Upload Music</h1>
+    <form method="POST">
+        <label>Nome da música:</label><br>
+        <input type="text" name="name"><br><br>
+
+        <label>ID da Roblox:</label><br>
+        <input type="text" name="id" required><br><br>
+
+        <button type="submit">Enviar</button>
+    </form>
+    """
 
 @app.route("/songs")
 def songs_page():
