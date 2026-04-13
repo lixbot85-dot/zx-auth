@@ -162,7 +162,8 @@ def upload_file(folder):
             {get_preview_html(folder, filename)}
 
             <br><br>
-            <a href="/explorer/{folder}">Voltar</a>
+            <a href="/files/{folder}">Checar</a>
+            <a href="/upload/{folder}">Voltar</a>
         </body>
         """
 
