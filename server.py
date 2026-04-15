@@ -401,6 +401,14 @@ def songs_page():
 
     return html
 
+# ===== scripts =====
+@app.route("/scripts")
+def scripts():
+    path = os.path.join(BASE_DIR, "scripts")
+    if not os.path.exists(path):
+        return f"PASTA NÃO EXISTE: {path}"
+    return str(os.listdir(path))
+
 # ===== RUN =====
 if __name__ == "__main__":
     app.run(debug=True)
